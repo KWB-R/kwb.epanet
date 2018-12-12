@@ -1,0 +1,654 @@
+# outputFileSize ---------------------------------------------------------------
+outputFileSize <- function # size of binary output file
+### size of binary output file in Bytes, kB (rounded), MB (rounded)
+(
+  configuration
+)
+{
+  Nnodes <- nrow(configuration$JUNCTIONS)  
+  Npumps <- nrow(configuration$PUMPS)
+  Ntanks <- nrow(configuration$TANKS)
+  Npipes <- nrow(configuration$PIPES)
+  Nvalves <- nrow(configuration$VALVES) 
+  
+  Nperiods <- getNumberOfPeriods(configuration)
+  
+  Nlinks <- Npipes + Npumps + Nvalves
+  
+  size.prolog <- 884 + 36*Nnodes + 52*Nlinks + 8*Ntanks 
+  size.energy.use <- 28*Npumps + 4   
+  size.dynamic.results <- (16*Nnodes + 32*Nlinks)*Nperiods
+  size.epilog <- 28   
+  
+  bytes <- size.prolog + size.energy.use + size.dynamic.results + size.epilog
+  
+  c(bytes = bytes, 
+    kB = round(bytes/1024), 
+    MB = round(bytes/(1024*1024)))
+  ### named vector of numeric representing output file size in bytes, kB
+  ### (rounded) and MB (rounded), respectively
+}
+
+# getNumberOfPeriods -----------------------------------------------------------
+getNumberOfPeriods <- function # number of simulation periods
+### number of simulation periods, calculated from duration and hydraulic time
+### step both of which must be given in the [TIMES] section of the EPANET
+### configuration
+(
+  configuration
+)
+{
+  times <- configuration$TIME
+  
+  stopifnot(!is.null(times))
+  
+  hydraulic.timestep <- times[times[[1]] == "Hydraulic Timestep", 2]
+  duration <- times[times[[1]] == "Duration", 2]
+  
+  quotient(
+    .hhmmssToSeconds(paste(duration, "00", sep = ":")),
+    .hhmmssToSeconds(paste(hydraulic.timestep, "00", sep = ":"))
+  )  
+}
+
+# reportEnergyUse --------------------------------------------------------------
+reportEnergyUse <- function # reportEnergyUse
+### reportEnergyUse
+(
+  outdat
+  ### output data read from EPANET out-file
+) 
+{
+  outdat$energyUse
+  pumpIDs <- outdat$energyUse$PumpIndexInListOfLinks  
+  
+  data.frame(
+    Pump = outdat$prolog$IDStringOfEachLink[pumpIDs],
+    Percent.Utilization = round(outdat$energyUse$PumpUtilization, 2),
+    Average.Efficiency = round(outdat$energyUse$AvgEfficiency, 2), 
+    Kw.hr.per.m3 = round(outdat$energyUse$AvgKwPerVolume, 4),
+    Average.Kwatts = round(outdat$energyUse$AvgKW, 2),
+    Peak.Kwatts = round(outdat$energyUse$PeakKW, 2),
+    Cost.per.day = round(outdat$energyUse$AvgCostPerDay, 2))
+}
+
+# getLinkResults ---------------------------------------------------------------
+getLinkResults <- function # getLinkResults
+### getLinkResults
+(
+  outdat,
+  ### output data read from EPANET output file, as returned by 
+  ### \code{\link{readEpanetOutputFile}}
+  links,
+  ### names of links to be included in the returned data frame. You may use
+  ### \code{\link{getNamesOfPipes}, \link{getNamesOfPumps}, 
+  ### \link{getNamesOfValves}} in order to get the names of available links
+  vars = c("q", "v", "hl", "wq", "sta", "set", "rr", "ff")
+  ### acronyms of variables to be included in the returned data frame. 
+  ### "Q" = flow, "v" = velocity, "hl" = headloss, "wq" = avg. water quality, 
+  ### "sta" = status, "set" = setting, "rr" = reaction rate, 
+  ### "ff" = friction factor
+)
+{
+  .getLinkOrNodeResults(outdat, TRUE, links, vars)
+}  
+
+# getNodeResults ---------------------------------------------------------------
+getNodeResults <- function # getNodeResults
+### getNodeResults
+(
+  outdat,
+  ### output data read from EPANET output file, as returned by 
+  ### \code{\link{readEpanetOutputFile}}
+  nodes,
+  ### names of nodes to be included in the returned data frame. You may use
+  ### \code{\link{getNamesOfJunctions}, \link{getNamesOfReservoirs}, 
+  ### \link{getNamesOfTanks}} in order to get the names of available nodes
+  vars = c("d", "h", "p", "wq")
+  ### acronyms of variables to be included in the returned data frame. 
+  ### "d" = demand, "h" = head, "p" = pressure, "wq" = water quality
+)
+{
+  .getLinkOrNodeResults(outdat, FALSE, nodes, vars)
+}  
+
+# .getLinkOrNodeResults --------------------------------------------------------
+.getLinkOrNodeResults <- function # .getLinkOrNodeResults
+### .getLinkOrNodeResults
+(
+  outdat,
+  ### output data read from EPANET output file, as returned by 
+  ### \code{\link{readEpanetOutputFile}}
+  linkResults = TRUE,
+  objects,
+  ### names of objects (links or nodes) to be included in the returned data 
+  ### frame. 
+  vars
+  ### variables to be included in the returned data frame
+)
+{
+  varInfo <- .variableInfo()
+  
+  if (linkResults) {
+    timeSeries <- getLinkTimeseriesFromOutputData(outdat)    
+    varNameInfo <- varInfo$linkVariables     
+  }
+  else {
+    timeSeries <- getNodeTimeseriesFromOutputData(outdat)
+    varNameInfo <- varInfo$nodeVariables
+  }
+  
+  result <- NULL
+  
+  for (variable in vars) {  
+    
+    element <- varNameInfo[[variable]][2]
+    
+    valueMatrix <- timeSeries[[element]][, objects]
+    
+    resultBlock <- cbind(variable=varNameInfo[[variable]][1], 
+                         step=1:nrow(valueMatrix),
+                         as.data.frame(valueMatrix))
+    
+    result <- rbind(result, resultBlock)
+  }
+  result
+}  
+
+# .variableInfo ----------------------------------------------------------------
+.variableInfo <- function # .variableInfo
+### .variableInfo
+() 
+{
+  list(linkVariables = list(q = c("flow", "flows"),
+                            v = c("velocity", "velocities"),
+                            hl = c("headloss", "headlosses"),
+                            wq = c("waterQuality", "avgWaterQualities"), 
+                            sta = c("status", "statusCodes"), 
+                            set = c("setting", "settings"),
+                            rr = c("reactionRate", "reactionRates"),
+                            ff = c("frictionFactor", "frictionFactors")),
+       nodeVariables = list(d = c("demand", "demands"),
+                            h = c("head", "heads"),
+                            p = c("pressure", "pressures"),
+                            wq = c("waterQuality", "waterQualities")))
+}
+
+# getPumpPerformance -----------------------------------------------------------
+getPumpPerformance <- function # getPumpPerformance
+### get time series of pump performance from EPANET result using head curves
+### and efficiency curves as contained in EPANET input file
+(
+  inpdata, 
+  ### data structure read from EPANET input file, as returned by 
+  ### \code{\link{readEpanetInputFile}}.
+  outdata, 
+  ### data structure read from EPANET output file, as returned by 
+  ### \code{\link{readEpanetOutputFile}}.  
+  pumpnames
+  ### vector with names of pumps for which the pump performance should be evaluated
+)
+{
+  ##seealso<< \code{\link{plotPumpPerformance}}  
+  pumpPerformance <- data.frame()
+  nodeTimeseries <- getNodeTimeseriesFromOutputData(outdata)
+  linkTimeseries <- getLinkTimeseriesFromOutputData(outdata)
+  
+  for(pumpname in pumpnames)
+  {
+   efficiencyCurve <- getEfficiencyCurve(inpdata$ENERGY, inpdata$CURVES, pumpname)
+   headCurve <- getHeadCurve(inpdata$PUMP, inpdata$CURVES, pumpname)  
+  
+  
+  Q <- linkTimeseries$flows[, pumpname]
+  H <- approx(x=headCurve$X_Value, y=headCurve$Y_Value, xout=Q)$y
+  Eff <- approx(x=efficiencyCurve$X_Value, y=efficiencyCurve$Y_Value, xout=Q)$y  
+  specEn <- H/Eff/3.67
+  En <- specEn*Q
+  tmp <- data.frame(Q=Q, H=H, Eff=Eff, specEn=specEn, En)
+  ### data frame with columns \emph{Q} (discharge), \emph{H} (head), 
+  ### \emph{Eff} (efficiency), \emph{specEn} (specific efficiency), 
+  ### \emph{En} (energy)
+  pumpPerformance <- rbind(
+    pumpPerformance, 
+    data.frame(pumpnames=pumpname,step=1:nrow(tmp), tmp)
+  )
+  }
+  pumpPerformance
+
+}
+
+# plotPumpPerformance ----------------------------------------------------------
+plotPumpPerformance <- function # plotPumpPerformance
+### plot time series of discharge, head and pump performance
+(
+  xCols, 
+  ### vector of columns contained in data.frame retrieved by getPumpPerformance() 
+  ### to be used as for x axis plotting, e.g. c("step", "Q")
+  yCols, 
+  ### vector of columns contained in data.frame retrieved by getPumpPerformance() 
+  ### to be used as for y axis plotting, e.g. c("Eff", "specEn", "En")
+  pumpPerformanceTimeSeries 
+  ###  pump performance time series as retrieved by getPumpPerformance(),
+  ###  seealso<< \code{\link{getPumpPerformance}}
+)
+{
+  # \xb3 = "to the power of three", keep it like this (ASCII required)!
+  
+  labels <- c(
+    Eff = "Global pump efficiency (%)", 
+    specEn = "Specific energy demand (kwh/m\xb3)",
+    En = "Energy demand (kw)", 
+    step = "Reporting step number", 
+    Q = "Production rate (m\xb3/h)" 
+  )
+  
+  defaultPlotType <- "l"
+  numberOfPumps <- length(unique(pumpPerformanceTimeSeries$pumpnames))
+  
+  for (xCol in xCols)
+  { 
+    xLabel <- as.character(labels[names(labels)==xCol])
+    
+    if (xCol=="Q") defaultPlotType <- "p"
+        
+    for (yCol in yCols)
+    {
+      formula <- as.formula(sprintf("%s ~ %s", yCol, xCol))
+      yLabel <- as.character(labels[names(labels)==yCol])
+          
+      print(xyplot(
+        formula, 
+        groups = pumpPerformanceTimeSeries$pumpnames, 
+        data = pumpPerformanceTimeSeries, 
+        type = defaultPlotType, 
+        auto.key = list(columns= numberOfPumps),
+        xlab = xLabel,
+        ylab = yLabel
+      ))
+    }  
+  }
+}
+
+# getNodeTimeseriesFromOutputData ----------------------------------------------
+getNodeTimeseriesFromOutputData <- function # getNodeTimeseriesFromOutputData
+### getNodeTimeseriesFromOutputData
+(
+  outdat
+  ### data structure read from EPANET output file, as returned by 
+  ### \code{\link{readEpanetOutputFile}}.    
+)
+{
+  dynamicResults <- outdat$dynamicResults
+  prolog <- outdat$prolog
+ 
+  .stopOnEitherNull(prolog, dynamicResults)
+  
+  list(demands = .getNodePropertyTimeSeries(dynamicResults, "DemandAtEachNode", prolog),
+       heads = .getNodePropertyTimeSeries(dynamicResults, "HeadAtEachNode", prolog),
+       pressures = .getNodePropertyTimeSeries(dynamicResults, "PressureAtEachNode", prolog),
+       waterQualities = .getNodePropertyTimeSeries(dynamicResults, "WaterQualityAtEachNode", prolog))  
+}
+
+# getLinkTimeseriesFromOutputData ----------------------------------------------
+getLinkTimeseriesFromOutputData <- function # getLinkTimeseriesFromOutputData
+### getLinkTimeseriesFromOutputData
+(
+  outdat
+  ### data structure read from EPANET output file, as returned by 
+  ### \code{\link{readEpanetOutputFile}}.    
+)
+{
+  dynamicResults <- outdat$dynamicResults
+  prolog <- outdat$prolog
+
+  .stopOnEitherNull(prolog, dynamicResults)
+  
+  list(flows = .getLinkPropertyTimeSeries(dynamicResults, "FlowInEachLink", prolog),
+       velocities = .getLinkPropertyTimeSeries(dynamicResults, "VelocityInEachLink", prolog),
+       headlosses = .getLinkPropertyTimeSeries(dynamicResults, "HeadlossForEachLink", prolog),
+       avgWaterQualities = .getLinkPropertyTimeSeries(dynamicResults, "AvgWaterQualityInEachLink", prolog),
+       statusCodes = .getLinkPropertyTimeSeries(dynamicResults, "StatusCodeForEachLink", prolog),
+       settings = .getLinkPropertyTimeSeries(dynamicResults, "SettingForEachLink", prolog),
+       reactionRates = .getLinkPropertyTimeSeries(dynamicResults, "ReactionRateForEachLink", prolog),
+       frictionFactors = .getLinkPropertyTimeSeries(dynamicResults, "FrictionFactorForEachLink", prolog))
+}
+
+# .stopOnEitherNull ------------------------------------------------------------
+.stopOnEitherNull <- function(prolog, dynamicResults)
+{
+  if (is.null(prolog) || is.null(dynamicResults)) {
+    stop("Either or both of the elements 'prolog' and 'dynamicResults' not ",
+         "found in outdat!")
+  }  
+}
+
+# showProperties ---------------------------------------------------------------
+showProperties <- function # showProperties
+### show node and link properties available in EPANET output
+(
+  outdata
+  ### list structure with EPANET results as retrieved by 
+  ### \code{\link{readEpanetOutputFile}}
+) 
+{
+  cat("Available node properties:\n")
+  print(names(outdata$dynamicResults[[1]]$NodeData))
+  #[1] "DemandAtEachNode"       "HeadAtEachNode"         "PressureAtEachNode"    
+  #[4] "WaterQualityAtEachNode"
+
+  cat("Available link properties:\n")
+  print(names(outdata$dynamicResults[[1]]$LinkData))
+  #[1] "FlowInEachLink"            "VelocityInEachLink"       
+  #[3] "HeadlossForEachLink"       "AvgWaterQualityInEachLink"
+  #[5] "StatusCodeForEachLink"     "SettingForEachLink"       
+  #[7] "ReactionRateForEachLink"   "FrictionFactorForEachLink"  
+}
+
+# readEpanetOutputFile ---------------------------------------------------------
+readEpanetOutputFile <- function # readEpanetOutputFile
+### read EPANET output file 
+(
+  outfile,
+  ### full path to EPANET output file
+  read.prolog = TRUE,
+  ### if TRUE, the "Prolog" section is read from the output file and contained
+  ### in the output list
+  read.energyUse = TRUE,
+  ### if TRUE, the "Energy Use" section is read from the output file and
+  ### contained in the output list
+  read.dynamicResults = TRUE,
+  ### if TRUE, the "Extended Period" section is read from the output file and
+  ### contained in the output list
+  read.epilog = TRUE
+  ### if TRUE, the "Epilog" section is read from the output file and contained
+  ### in the output list
+) 
+{
+  ##seealso<< \code{\link{readEpanetInputFile}}
+  
+  con <- file(outfile, "rb")
+  on.exit(close(con))
+  
+  # Always read prolog and energy use
+  prolog <- .readProlog(con)  
+  energyUse <- .readEnergyUse(con, prolog)  
+  
+  if (read.dynamicResults || read.epilog) {
+    dynamicResults <- .readDynamicResults(con, prolog)  
+  }
+  
+  #unknown <- .readStringOfLength(con, 4)
+  
+  if (read.epilog) {
+    epilog <- .readEpilog(con)    
+  }
+  
+  # initialise result list
+  result <- list()
+  
+  if (read.prolog) {
+    result$prolog <- prolog
+  }
+  if (read.energyUse) {
+    result$energyUse <- energyUse
+  }
+  if (read.dynamicResults) {
+    result$dynamicResults <- dynamicResults
+  }  
+  if (read.epilog) {
+    epilog <- .readEpilog(con)    
+  }
+  
+  result
+  ### list with elements \emph{prolog} (if read.prolog = TRUE), \emph{energyUse}
+  ### (if read.energyUse = TRUE), \emph{dynamicResults} (if read.dynamicResults
+  ### = TRUE) and \emph{epilog} (if read.epilog = TRUE), containing the
+  ### different parts of the output file, as described in the documentation of
+  ### the EPANET Toolkit.
+}
+
+# .getNodePropertyTimeSeries ----------------------------------------------------
+.getNodePropertyTimeSeries <- function # .getNodePropertyTimeSeries
+### .getNodePropertyTimeSeries
+(
+  dynamicResults, 
+  property, 
+  prolog
+)
+{
+  .getNodeOrLinkPropertyTimeSeries(dynamicResults, property, prolog, "Node")
+}
+
+# .getLinkPropertyTimeSeries ---------------------------------------------------
+.getLinkPropertyTimeSeries <- function # .getLinkPropertyTimeSeries
+### .getLinkPropertyTimeSeries
+(
+  dynamicResults, 
+  property, 
+  prolog
+)
+{
+  .getNodeOrLinkPropertyTimeSeries(dynamicResults, property, prolog, "Link")
+}
+
+# .getNodeOrLinkPropertyTimeSeries ----------------------------------------------
+.getNodeOrLinkPropertyTimeSeries <- function # .getNodeOrLinkPropertyTimeSeries
+### .getNodeOrLinkPropertyTimeSeries
+(
+  dynamicResults, 
+  property, 
+  prolog,
+  nodeOrLink
+)
+{
+  name1 <- paste(nodeOrLink, "Data", sep="")
+  name2 <- paste("IDStringOfEach", nodeOrLink, sep="")
+  m <- t(sapply(dynamicResults, FUN=function(x, property){
+    x[[name1]][[property]]}, property))
+  colnames(m) <- prolog[[name2]]
+  m
+}
+
+# .readEpilog ------------------------------------------------------------------
+.readEpilog <- function # .readEpilog
+### .readEpilog
+(
+  con
+)
+{
+  floatValues <- .readDbl(con, 4)
+  intValues <- .readInt(con, 3)
+  
+  list(AvgBulkReactionRate = floatValues[1],
+       AvgWallReactionRate = floatValues[2],
+       AvgTankReactionRate = floatValues[3],
+       AvgSourceInflowRate = floatValues[4],
+       NumberOfReportingPeriods = intValues[1],
+       WarningFlag = intValues[2],
+       MagicNumber = intValues[3])
+}
+
+# .numberOfPeriods -------------------------------------------------------------
+.numberOfPeriods <- function(prolog) # .numberOfPeriods
+### .numberOfPeriods
+{
+  prolog$SimulationDuration / prolog$ReportingTimeStep + 1
+}
+
+# .readDynamicResults ----------------------------------------------------------
+.readDynamicResults <- function # .readDynamicResults
+### .readDynamicResults
+(
+  con, 
+  prolog
+) 
+{
+  dynamicResults <- list()
+  for (i in seq(1, by=1, length.out=.numberOfPeriods(prolog))) {
+    dynamicResults[[i]] <- .readDynamicResultsForOnePeriod(
+      con, prolog$NumberOfNodes, prolog$NumberOfLinks)
+  }
+  dynamicResults
+}
+
+# .readEnergyUse ---------------------------------------------------------------
+.readEnergyUse <- function # .readEnergyUse
+### .readEnergyUse
+(
+  con, 
+  prolog
+) 
+{
+  energyUse <- NULL
+  for (i in seq(1, by=1, length.out=prolog$NumberOfPumps)) {
+    energyUse <- rbind(energyUse, .readEnergyUseOfOnePump(con))
+  }
+  
+  PeakEnergyUsage <- readBin(con, double(), size=4)
+  
+  energyUse
+}
+
+# .readDynamicResultsForOnePeriod ----------------------------------------------
+.readDynamicResultsForOnePeriod <- function # .readDynamicResultsForOnePeriod
+### .readDynamicResultsForOnePeriod
+(
+  con, 
+  numberOfNodes, 
+  numberOfLinks
+)
+{
+  list(
+    NodeData = data.frame(
+      DemandAtEachNode = .readDbl(con, numberOfNodes),
+      HeadAtEachNode = .readDbl(con, numberOfNodes),
+      PressureAtEachNode = .readDbl(con, numberOfNodes),
+      WaterQualityAtEachNode = .readDbl(con, numberOfNodes)),
+    LinkData = data.frame(
+      FlowInEachLink = .readDbl(con, numberOfLinks),
+      VelocityInEachLink = .readDbl(con, numberOfLinks),
+      HeadlossForEachLink = .readDbl(con, numberOfLinks),
+      AvgWaterQualityInEachLink = .readDbl(con, numberOfLinks),
+      StatusCodeForEachLink = .readDbl(con, numberOfLinks),
+      SettingForEachLink = .readDbl(con, numberOfLinks),
+      ReactionRateForEachLink = .readDbl(con, numberOfLinks),
+      FrictionFactorForEachLink = .readDbl(con, numberOfLinks)))
+}
+
+# .readEnergyUseOfOnePump ------------------------------------------------------
+.readEnergyUseOfOnePump <- function # .readEnergyUseOfOnePump
+### .readEnergyUseOfOnePump
+(
+  con
+) 
+{
+  data.frame(PumpIndexInListOfLinks = readBin(con, integer()),
+             PumpUtilization = readBin(con, double(), size=4),
+             AvgEfficiency =   readBin(con, double(), size=4),
+             AvgKwPerVolume =  readBin(con, double(), size=4),
+             AvgKW =           readBin(con, double(), size=4),
+             PeakKW =          readBin(con, double(), size=4),
+             AvgCostPerDay =   readBin(con, double(), size=4),
+             PeakEnergyUsage = NA # readBin(con, double(), size=4)
+             )
+}
+
+# .readNumberOfStringsOfLength -------------------------------------------------
+.readNumberOfStringsOfLength <- function # .readNumberOfStringsOfLength
+### .readNumberOfStringsOfLength
+(
+  con, 
+  numberOfStrings, 
+  stringLength
+) 
+{
+  strings <- character()
+  for (i in seq(1, by=1,length.out=numberOfStrings)) {
+    strings <- c(strings, .readStringOfLength(con, stringLength))
+  }
+  strings
+}
+
+# .readStringOfLength ----------------------------------------------------------
+.readStringOfLength <- function # .readStringOfLength
+### .readStringOfLength
+(
+  con, 
+  stringLength
+) 
+{
+  rawToChar(readBin(con, raw(), stringLength))
+}
+
+# .readProlog ------------------------------------------------------------------
+.readProlog <- function # .readProlog
+### .readProlog
+(
+  con
+)
+{
+  prolog <- as.list(readBin(con, integer(), 15))
+  names(prolog) <- c("MagicNumber", 
+                     "Version", 
+                     "NumberOfNodes",
+                     "NumberOfReservoirsAndTanks", 
+                     "NumberOfLinks", 
+                     "NumberOfPumps", 
+                     "NumberOfValves",
+                     "WaterQualityOption",
+                     "IndexOfNodeForSourceTracing", 
+                     "FlowUnitsOption",
+                     "PressureUnitsOption",
+                     "TimeStatisticsFlag",
+                     "ReportingStartTime",
+                     "ReportingTimeStep",
+                     "SimulationDuration")
+
+  prolog$ProblemTitle1 <- .readStringOfLength(con, 80)
+  prolog$ProblemTitle2 <- .readStringOfLength(con, 80)
+  prolog$ProblemTitle3 <- .readStringOfLength(con, 80)
+  prolog$NameOfInputFile <- .readStringOfLength(con, 260)
+  prolog$NameOfReportFile <- .readStringOfLength(con, 260)
+  prolog$NameOfChemical <- .readStringOfLength(con, 32)
+  prolog$ChemicalConcentrationUnits <- .readStringOfLength(con, 32)
+  prolog$IDStringOfEachNode <- .readNumberOfStringsOfLength(con, prolog$NumberOfNodes, 32)
+  prolog$IDStringOfEachLink <- .readNumberOfStringsOfLength(con, prolog$NumberOfLinks, 32)
+  
+  prolog$IndexOfHeadNodeOfEachLink <- .readInt(con, prolog$NumberOfLinks)
+  prolog$IndexOfTailNodeOfEachLink <- .readInt(con, prolog$NumberOfLinks)
+  prolog$TypeCodeOfEachLink <- .readInt(con, prolog$NumberOfLinks)
+  prolog$NodeIndexOfEachTank <- .readInt(con, prolog$NumberOfReservoirsAndTanks)
+  
+  prolog$CrossSectionalAreaOfEachTank <- .readDbl(con, prolog$NumberOfReservoirsAndTanks)
+  prolog$ElevationOfEachNode <- .readDbl(con, prolog$NumberOfNodes)
+  prolog$LengthOfEachLink <- .readDbl(con, prolog$NumberOfLinks)
+  prolog$DiameterOfEachLink <- .readDbl(con, prolog$NumberOfLinks)  
+  prolog
+}
+
+# .readInt ---------------------------------------------------------------------
+.readInt <- function # .readInt
+### read integer value from binary file
+(
+  con, 
+  ### file connection
+  n
+  ### number of values to be read
+) 
+{
+  readBin(con, integer(), n)
+}
+
+# .readDbl ----------------------------------------------------------------------
+.readDbl <- function # .readDbl
+### read double value from binary file
+(
+  con, 
+  ### file connection
+  n
+  ### number of values to be read
+)
+{
+  readBin(con, double(), n, size=4)
+}

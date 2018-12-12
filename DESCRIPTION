@@ -1,0 +1,10 @@
+Package: kwb.epanet
+Maintainer: Hauke Sonnenberg <hauke.sonnenberg@kompetenz-wasser.de>
+Depends: kwb.utils, kwb.plot, lattice, plot3D, gtools
+Author: Hauke Sonnenberg
+Version: 0.1.99
+License: GPL
+Title: Interface to EPANET (http://www.epa.gov/nrmrl/wswrd/dw/epanet.html)
+Description: Functions enabling the reading and writing of EPANET input files, 
+    and reading of EPANET output files. 
+
