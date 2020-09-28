@@ -30,6 +30,10 @@ pkg_dependencies <- c('kwb.utils', 'kwb.plot', 'lattice', 'plot3D', 'gtools')
 
 sapply(pkg_dependencies, usethis::use_package)
 
+github_dependencies <- sprintf("github::kwb-r/%s", c("kwb.plot", "kwb.utils"))
+                               
+desc::desc_add_remotes(github_dependencies)
+
 usethis::use_vignette("tutorial", "Tutorial")
 
 kwb.pkgbuild::use_autopkgdown()

@@ -21,3 +21,6 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Suggests: 
     covr
+Remotes:  
+    github::kwb-r/kwb.plot,
+    github::kwb-r/kwb.utils
