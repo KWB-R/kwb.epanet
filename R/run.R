@@ -1,43 +1,46 @@
 # setEpanetInstallationPath ----------------------------------------------------
-setEpanetInstallationPath <- function # setEpanetInstallationPath
-### setEpanetInstallationPath
-(
-  epanet.dir
-  ### full path to MS Access database or ODBC database name
-)  
+
+#' Set Epanet Installation Path
+#' 
+#' @param epanet.dir full path to MS Access database or ODBC database name
+#' 
+setEpanetInstallationPath <- function(epanet.dir)  
 {
   if (! is.null(epanet.dir) && ! file.exists (epanet.dir)) {
-    stop("The folder ", hsQuoteChr(epanet.dir), "does not exist.")
+    stop("The folder ", kwb.utils::hsQuoteChr(epanet.dir), "does not exist.")
   }
   
   options(kwb.db.epanet.dir = epanet.dir)    
 }
 
 # getEpanetInstallationPath ----------------------------------------------------
-getEpanetInstallationPath <- function # getEpanetInstallationPath
-### getEpanetInstallationPath
-() 
+
+#' Get Epanet Installation Path
+#' 
+getEpanetInstallationPath <- function() 
 {
   epanet.dir <- getOption("kwb.db.epanet.dir")
   
   if (! is.null(epanet.dir) && ! file.exists (epanet.dir)) {
-    stop("The folder ", hsQuoteChr(epanet.dir), "does not exist.")
+    stop("The folder ", kwb.utils::hsQuoteChr(epanet.dir), "does not exist.")
     options(kwb.db.epanet.dir = NULL)
   }
   
   if (is.null(epanet.dir)) {
     
-    defaultDirectories <- file.path(defaultWindowsProgramFolders(), "EPANET2")
+    defaultDirectories <- file.path(kwb.utils::defaultWindowsProgramFolders(), "EPANET2")
     
     existing <- which(file.exists(defaultDirectories))
     
     if (length(existing) > 0) {
+      
       epanet.dir <- defaultDirectories[existing[1]]
-    }
-    else {
+      
+    } else {
+      
       stop(
         "I did not find the EPANET installation path. I was looking for:\n  ",
-        paste(hsQuoteChr(defaultDirectories), collapse="\n  "), "\n",
+        paste(kwb.utils::hsQuoteChr(defaultDirectories), collapse="\n  "), "\n",
         "Please use 'setEpanetInstallationPath' to specify the path to an ",
         "existing EPANET installation folder.")
     }
@@ -45,52 +48,59 @@ getEpanetInstallationPath <- function # getEpanetInstallationPath
   
   setEpanetInstallationPath(epanet.dir)
   
-  return (epanet.dir)
+  epanet.dir
 }
+
 # runEpanetGUI -----------------------------------------------------------------
-runEpanetGUI <- function # runEpanetGUI
-### runEpanetGUI
-(
-  inpfile = "",
-  epanet.dir = getEpanetInstallationPath()
-)
+
+#' Run Epanet GUI
+#' 
+runEpanetGUI <- function(inpfile = "", epanet.dir = getEpanetInstallationPath())
 {
-  epanet.exe <- .stopIfEpanetExeDoesNotExist(epanet.dir, "epanet2w.exe")  
-  hsSystem(sprintf("%s %s", shQuote(epanet.exe), shQuote(windowsPath(inpfile))),
-           wait=FALSE)
+  epanet.exe <- .stopIfEpanetExeDoesNotExist(epanet.dir, "epanet2w.exe")
+  
+  kwb.utils::hsSystem(
+    sprintf("%s %s", shQuote(epanet.exe), shQuote(kwb.utils::windowsPath(inpfile))),
+    wait = FALSE
+  )
 }
 
 # .stopIfEpanetExeDoesNotExist -------------------------------------------------
 .stopIfEpanetExeDoesNotExist <- function(epanet.dir, epanet.exe)
 {
-  epanet.exe <- file.path(epanet.dir, epanet.exe)  
-  if (!file.exists(epanet.exe)) 
-    stop("No such file: ", epanet.exe, 
-         "\n  Please use the argument 'epanet.dir' to set the EPANET installation path")
+  epanet.exe <- file.path(epanet.dir, epanet.exe)
+  
+  if (! file.exists(epanet.exe)) 
+    stop(
+      "No such file: ", epanet.exe, 
+      "\n  Please use the argument 'epanet.dir' to set the EPANET installation path"
+    )
   
   epanet.exe
 }
 
 # runEpanetConfiguration -------------------------------------------------------
-runEpanetConfiguration <- function # Run EPANET INP configuration
-### Run EPANET INP configuration
-(
+
+#' Run EPANET INP configuration
+#' 
+#' @param inpdat input data as retrieved by \code{\link{readEpanetInputFile}}
+#' @param name \code{name} of input file to be generated in tempdir()
+#' @param returnOutput if TRUE, the output is read from the output file (if generated, see
+#'   \emph{write.output}) and returned. Default: value of \emph{write.output}
+#' @param write.output if TRUE, EPANET will write a binary output file, else not  
+#' @param \dots further arguments passed to \code{\link{runEpanet}} and finally to 
+#'   \code{\link{readEpanetOutputFile}}, such as: \emph{read.prolog}, 
+#'   \emph{read.energyUse}, \emph{read.dynamicResults}, \emph{read.epilog}, see
+#'   there.
+#' @param dbg if TRUE, debug messages are shown. Default: FALSE  
+#' 
+runEpanetConfiguration <- function(
   inpdat,
-  ### input data as retrieved by \code{\link{readEpanetInputFile}}
   name = "tmpEpanet",
-  ### name of input file to be generated in tempdir()
   returnOutput = write.output,
-  ### if TRUE, the output is read from the output file (if generated, see
-  ### \emph{write.output}) and returned. Default: value of \emph{write.output}
   write.output = TRUE,
-  ### if TRUE, EPANET will write a binary output file, else not  
   ...,
-  ### further arguments passed to \code{\link{runEpanet}} and finally to 
-  ### \code{\link{readEpanetOutputFile}}, such as: \emph{read.prolog}, 
-  ### \emph{read.energyUse}, \emph{read.dynamicResults}, \emph{read.epilog}, see
-  ### there.
   dbg = FALSE
-  ### if TRUE, debug messages are shown. Default: FALSE  
 )
 {
   inpfile <- file.path(tempdir(), paste(name, "inp", sep = "."))
@@ -107,43 +117,48 @@ runEpanetConfiguration <- function # Run EPANET INP configuration
 }
 
 # runEpanet --------------------------------------------------------------------
-runEpanet <- function # run EPANET with given input file
-### run EPANET with given input file
-(
+
+#' Run EPANET With Given Input File
+#' 
+#' @param inpfile full path to EPANET input file
+#' @param returnOutput if TRUE, the output is read from the generated output
+#'   file and returned
+#' @param epanet.dir path to EPANET installation directory. Default:
+#'   getEpanetInstallationPath()
+#' @param intern a logical, indicates whether to make the output of the command
+#'   an R object.
+#' @param write.output if TRUE, EPANET will write a binary output file, else not
+#' @param \dots further arguments passed to \code{\link{readEpanetOutputFile}},
+#'   such as: \emph{read.prolog}, \emph{read.energyUse},
+#'   \emph{read.dynamicResults}, \emph{read.epilog}, see there.
+#' @param dbg if TRUE, debug messages are shown. Default: FALSE
+#' 
+runEpanet <- function(
   inpfile, 
-  ### full path to EPANET input file
   returnOutput = FALSE,
-  ### if TRUE, the output is read from the generated output file and returned
   epanet.dir = getEpanetInstallationPath(),
-  ### path to EPANET installation directory. 
-  ### Default: getEpanetInstallationPath()
   intern = FALSE,
-  ### a logical, indicates whether to make the output of the command an R object.
   write.output = TRUE,
-  ### if TRUE, EPANET will write a binary output file, else not
   ...,
-  ### further arguments passed to \code{\link{readEpanetOutputFile}}, such as:
-  ### \emph{read.prolog}, \emph{read.energyUse}, \emph{read.dynamicResults},
-  ### \emph{read.epilog}, see there.
   dbg = FALSE
-  ### if TRUE, debug messages are shown. Default: FALSE    
 )
 {
   epanet.exe <- .stopIfEpanetExeDoesNotExist(epanet.dir, "epanet2d.exe")
   
-  tdir <- createDirAndReturnPath(file.path(tempdir(), "epanet"), dbg = dbg)
+  tdir <- kwb.utils::createDirectory(file.path(tempdir(), "epanet"), dbg = dbg)
   
   target.file <- file.path(tdir, basename(inpfile))
   
   # give warning (but overwrite anyway!) if file already exists
   if (file.exists(target.file)) {
-    catIf(
+    kwb.utils::catIf(
       dbg, 
       sprintf("*** There is already a file named \"%s\"", target.file),
-      "in the target folder. It will be overwritten.\n")
+      "in the target folder. It will be overwritten.\n"
+    )
   }
   
-  if (!file.copy(inpfile, tdir, overwrite=TRUE)) {
+  if (! file.copy(inpfile, tdir, overwrite=TRUE)) {
     stop(sprintf("Could not copy \"%s\" to \"%s\"!\n", inpfile, tdir))
   }
   
@@ -158,7 +173,7 @@ runEpanet <- function # run EPANET with given input file
     .dbg = dbg
   )
   
-  result <- list(files=file.path(tdir, filenames))
+  result <- list(files = file.path(tdir, filenames))
   
   checkReportFileForErrors(file.path(tdir, filenames$report))
   
@@ -168,17 +183,20 @@ runEpanet <- function # run EPANET with given input file
     outputFile <- file.path(tdir, filenames$output)
     
     if (filenames$output != "" && file.exists(outputFile)) {
+      
       result$output <- readEpanetOutputFile(outputFile, ...)  
-    }
-    else {
+      
+    } else {
+      
       if (outputFile == "") {
         warning("No output file was created.")  
-      }
-      else {
+      } else {
         warning("No such output file: ", outputFile)
       }
+      
       result$output <- NULL
     }
+    
     cat("ok.\n")
   }
   
@@ -186,12 +204,12 @@ runEpanet <- function # run EPANET with given input file
 }
 
 # checkReportFileForErrors -----------------------------------------------------
-checkReportFileForErrors <- function # checkReportFileForErrors
-### checkReportFileForErrors
-(
-  reportFile
-  ### full path to report file
-)
+
+#' Check Report File For Errors
+#' 
+#' @param reportFile full path to report file
+#' 
+checkReportFileForErrors <- function(reportFile)
 {
   fileLines <- readLines(reportFile, warn = FALSE)
   errorLines <- grep("Input Error \\d+\\:",  fileLines, value = TRUE)
@@ -203,24 +221,25 @@ checkReportFileForErrors <- function # checkReportFileForErrors
 }
 
 # runEpanetOnCommandLine -------------------------------------------------------
-runEpanetOnCommandLine <- function # runEpanetOnCommandLine
-### runEpanetOnCommandLine
-(
+
+#' Run Epanet On Command Line
+#' 
+#' @param write.output if TRUE, EPANET will write a binary output file, else not
+#' @param dbg if TRUE, debug messages are shown. Default: FALSE  
+#' 
+runEpanetOnCommandLine <- function(
   inpfile,
   epanet.exe,
   intern = FALSE,
   write.output = TRUE,
-  ### if TRUE, EPANET will write a binary output file, else not
   dbg = FALSE
-  ### if TRUE, debug messages are shown. Default: FALSE  
 )
 {  
   rptfile <- replaceFileExtension(inpfile, "rpt")
   
   if (write.output) {
     outfile <- replaceFileExtension(inpfile, "out")    
-  }
-  else {
+  } else {
     outfile <- ""
   }
   
@@ -228,40 +247,39 @@ runEpanetOnCommandLine <- function # runEpanetOnCommandLine
   
   if (dbg) {
     # hsShell echoes the command line onto the screen
-    output <- hsShell(commandLine = commandLine, intern = intern)
-  }
-  else {
+    output <- kwb.utils::hsShell(commandLine = commandLine, intern = intern)
+  } else {
     output <- shell(commandLine, intern = intern)
   }
   
-  list(input = inpfile, 
-       output = outfile, 
-       report = rptfile)
-}  
+  list(
+    input = inpfile, 
+    output = outfile, 
+    report = rptfile
+  )
+}
 
 # .epanetCommandLine -----------------------------------------------------------
-.epanetCommandLine <- function
-(
-  epanet.exe, inpfile, rptfile, outfile
-)
+.epanetCommandLine <- function(epanet.exe, inpfile, rptfile, outfile) 
 {
   if (outfile != "") {
-    outfile <- shQuote(outfile)    
+    outfile <- shQuote(outfile)
   }
   
-  sprintf("\"%s %s %s %s\"", shQuote(epanet.exe), 
-          shQuote(inpfile), shQuote(rptfile), outfile)
+  sprintf(
+    "\"%s %s %s %s\"", 
+    shQuote(epanet.exe), shQuote(inpfile), shQuote(rptfile), outfile
+  )
 }
 
 # replaceFileExtension ---------------------------------------------------------
-replaceFileExtension <- function # replaceFileExtension
-### replaceFileExtension
-(
-  filename, 
-  ### full path to file of which the extension is to be changed
-  newExtension
-  ### new extension to be given to the file, without dot "."
-)
+
+#' Replace File Extension
+#' 
+#' @param filename full path to file of which the extension is to be changed
+#' @param newExtension new extension to be given to the file, without dot "."
+#' 
+replaceFileExtension <- function(filename, newExtension)
 {
   gsub("\\.[^\\.]+$", paste(".", newExtension, sep=""), filename)
 }

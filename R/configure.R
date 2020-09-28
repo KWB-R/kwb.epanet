@@ -1,7 +1,11 @@
-# setTimeParameter ---------------------------------------------------------
-setTimeParameter <- function # set EPANET' time-related simulation parameters
-### set EPANET' time-related simulation parameters. See EPANET reference for the
-### meaning of the parameters
+# setTimeParameter -------------------------------------------------------------
+
+#' Set EPANET' Time-Related Simulation Parameters
+#' 
+#' Set EPANET' time-related simulation parameters. See EPANET reference for the
+#'   meaning of the parameters
+#' 
+setTimeParameter <- function
 (
   configuration, 
   duration = "",
@@ -34,10 +38,7 @@ setTimeParameter <- function # set EPANET' time-related simulation parameters
 }
 
 # .setTimeParameterIfGiven -----------------------------------------------------
-.setTimeParameterIfGiven <- function
-(
-  times, parameterName, parameterValue
-)
+.setTimeParameterIfGiven <- function(times, parameterName, parameterValue)
 {
   if (parameterValue != "") {
     
@@ -49,5 +50,6 @@ setTimeParameter <- function # set EPANET' time-related simulation parameters
     
     times[index, 2] <- parameterValue
   }
+  
   times
 }

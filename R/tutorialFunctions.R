@@ -1,7 +1,13 @@
 # calculateSpecificEnergyDemand ------------------------------------------------
-calculateSpecificEnergyDemand <-  function # calculateSpecificEnergyDemand
-### calculateSpecificEnergyDemand
-(
+
+#' Calculate Specific Energy Demand
+#' 
+#' @return list with elements \emph{Q}, \emph{E}, \emph{Eff}, holding the column
+#'   names of \emph{totalEnergy}, corresponding to discharge, energy demand and
+#'   efficiency, respectively. Default: list(Q = "Q.m3.per.hour.sum", E =
+#'   "Kw.hr.per.m3.avg", Eff = "Average.Efficiency.avg")
+#' 
+calculateSpecificEnergyDemand <-  function(
   waterDemand,
   totalEnergy,
   COLNAMES = list(
@@ -9,10 +15,6 @@ calculateSpecificEnergyDemand <-  function # calculateSpecificEnergyDemand
     E = "Kw.hr.per.m3.avg", 
     Eff = "Average.Efficiency.avg"
   )
-  ### list with elements \emph{Q}, \emph{E}, \emph{Eff}, holding the column
-  ### names of \emph{totalEnergy}, corresponding to discharge, energy demand and
-  ### efficiency, respectively. Default: list(Q = "Q.m3.per.hour.sum", E =
-  ### "Kw.hr.per.m3.avg", Eff = "Average.Efficiency.avg")
 )
 {
   # minimum specific energy of configurations satisfying the water demand
@@ -22,7 +24,7 @@ calculateSpecificEnergyDemand <-  function # calculateSpecificEnergyDemand
   # more efficient (but not satisfying the demand)
   indicesOfMoreEfficient <- which(totalEnergy[, COLNAMES$E] < minEnergy)
   
-  if(length(indicesOfMoreEfficient) > 0)
+  if (length(indicesOfMoreEfficient) > 0)
   {
     # initialise result data frame
     allCombinedSchemes <- data.frame()
@@ -51,85 +53,66 @@ calculateSpecificEnergyDemand <-  function # calculateSpecificEnergyDemand
     
     # Renumber the operation schemes
     totalEnergy$opSchemeID <- seq_len(nrow(totalEnergy))
-  } 
-  else {
-    cat("No better solution for minimising specific energy demand in case of", 
-        "using two different operation schemes a day")
+    
+  } else {
+    
+    cat(
+      "No better solution for minimising specific energy demand in case of", 
+      "using two different operation schemes a day"
+    )
   }
   
   ### Number of different pump configuration schemes per day
   totalEnergy$configsPerDay <- 1
   totalEnergy$configsPerDay[is.na(totalEnergy$nOn)] <- 2
   totalEnergy
-  
 }
 
 # .findCombinedSchemes ---------------------------------------------------------
-.findCombinedSchemes <- function
-(
-  allSchemes,
-  baseScheme,
-  waterDemand,
-  COLNAMES  
-)
+.findCombinedSchemes <- function(allSchemes, baseScheme, waterDemand, COLNAMES)
 {
-  # For each scheme S in allSchemes, calculate the (theoretical) fraction x of a
-  # day (or the time period that waterDemand relates to) that baseScheme needs 
-  # to run in order to satisfy the water demand when being combined with S (by 
-  # running baseScheme (with discharge Q1) for x * 1 day and S (with discharge
-  # Q2) for (1-x) * 1 day):
-  #     x * Q1 + (1-x) * Q2 = waterDemand 
-  # <=> x = (waterDemand - Q2) / (Q1 - Q2)
-  
-  allSchemes$timeFraction <- quotient(
+  allSchemes$timeFraction <- kwb.utils::quotient(
     waterDemand - allSchemes[[COLNAMES$Q]], 
     baseScheme[[COLNAMES$Q]] - allSchemes[[COLNAMES$Q]]
   )
   
-  # A negative time fraction or a time fraction > 1 indicates that it is not
-  # possible to satisfy the water demand with a combination of baseScheme and
-  # any other scheme within allSchemes -> keep only those schemes for which
-  # the calculated time fraction is in [0, 1].
-  
-  combiSchemes <- allSchemes[inRange(allSchemes$timeFraction, 0, 1), ]
+  combiSchemes <- allSchemes[kwb.utils::inRange(allSchemes$timeFraction, 0, 1), ]
   
   x <- combiSchemes$timeFraction
-  
-  V1 <- x  * baseScheme[[COLNAMES$Q]]
+  V1 <- x * baseScheme[[COLNAMES$Q]]
   V2 <- (1 - x) * combiSchemes[[COLNAMES$Q]]
   
   combiSchemes[[COLNAMES$Q]] <- V1 + V2
   
   for (columnName in c(COLNAMES$Eff, COLNAMES$E)) {
     combiSchemes[[columnName]] <- .weightedAverage(
-      weight1 = V1, value1 = baseScheme[[columnName]],
-      weight2 = V2, value2 = combiSchemes[[columnName]]
+      weight1 = V1, 
+      value1 = baseScheme[[columnName]], weight2 = V2, 
+      value2 = combiSchemes[[columnName]]
     )
   }
   
-  # Clear the scheme ID to indicate the need for renumbering
   combiSchemes$opSchemeID <- NA
-  
-  combiSchemes$nOn <- NA # combiSchemes$nOn + baseScheme$nOn
+  combiSchemes$nOn <- NA
   
   combiSchemes$PumpConfigName <- paste(
-    baseScheme$PumpConfigName, 
-    combiSchemes$PumpConfigName, 
-    sep = " & ")  
+    baseScheme$PumpConfigName, combiSchemes$PumpConfigName, sep = " & "
+  )
   
-  removeColumns(combiSchemes, "timeFraction")
+  kwb.utils::removeColumns(combiSchemes, "timeFraction")
 }
 
 # .weightedAverage -------------------------------------------------------------
-.weightedAverage <- function(weight1, value1, weight2, value2) 
+.weightedAverage <- function(weight1, value1, weight2, value2)
 {
   (weight1 * value1 + weight2 * value2) / (weight1 + weight2)
 }
 
 # plotOptimisationResults ------------------------------------------------------
-plotOptimisationResults <- function # plotOptimisationResults
-### plotOptimisationResults
-(
+
+#' Plot Optimisation Results
+#' 
+plotOptimisationResults <- function(
   totalEnergy, 
   name="",
   pumpsToReplace="",
@@ -138,7 +121,6 @@ plotOptimisationResults <- function # plotOptimisationResults
   ...
 )
 {
-    
   pch <- .getPlotCharacters(
     badQualityWells = userConstraints$namesOfWellsWithQualityProblems,
     configurationNames = totalEnergy$PumpConfigName,
@@ -149,11 +131,11 @@ plotOptimisationResults <- function # plotOptimisationResults
   x <- totalEnergy$Kw.hr.per.m3.avg       
   y <- totalEnergy$Average.Efficiency.avg
   
-  scatter2D(
+  plot3D::scatter2D(
     x = x, 
     y = y,
     colvar = totalEnergy$Q.m3.per.hour.sum,
-    col = rev(jet.col(n = nrow(totalEnergy))),
+    col = rev(plot3D::jet.col(n = nrow(totalEnergy))),
     pch = pch, 
     xlab = "Specific energy (kWh/m\u00b3)", 
     ylab = "Average efficiency (%)",
@@ -162,30 +144,35 @@ plotOptimisationResults <- function # plotOptimisationResults
     las = 1,
     ...
   )
-  legend("topright", pch=c(2,1,17,16), legend = c("< demand & quality possibly not ok",
-                                                  "< demand & quality ok",
-                                                  "> demand & quality possibly not ok",
-                                                  "> demand & quality ok"
-                                                 )
-         )
+  
+  graphics::legend(
+    "topright", pch = c(2, 1, 17, 16), 
+    legend = c(
+      "< demand & quality possibly not ok",
+      "< demand & quality ok",
+      "> demand & quality possibly not ok",
+      "> demand & quality ok"
+    )
+  )
   
   # draw vertical line at specific energy of current operation (if applicable)
   specificEnergy <- currentOperation$SpecificEnergy
   
   if (! is.null(specificEnergy) && !is.na(specificEnergy)) {    
-    abline(v = specificEnergy, col = "grey", lty = 2)
-    text(specificEnergy,getPlotRegionSizeInUserCoords()$bottom + 2, 
-         col="grey", 
-         labels = currentOperation$Label)
-    
-  
+    graphics::abline(v = specificEnergy, col = "grey", lty = 2)
+    graphics::text(
+      specificEnergy,
+      kwb.plot::getPlotRegionSizeInUserCoords()$bottom + 2, 
+      col = "grey", 
+      labels = currentOperation$Label
+    )
   }
   
   indices <- which(is.na(totalEnergy$nOn) | totalEnergy$nOn == 1)
   
-  text2D(
+  plot3D::text2D(
     x = x[indices], # * 0.95, 
-    y = y[indices] + cmToUserWidthAndHeight(cm = 0.3)$height, # * 0.95, , 
+    y = y[indices] + kwb.plot::cmToUserWidthAndHeight(cm = 0.3)$height, # * 0.95, , 
     labels = totalEnergy$PumpConfigName[indices], 
     add = TRUE, 
     col = "black",
@@ -193,59 +180,57 @@ plotOptimisationResults <- function # plotOptimisationResults
   )
 }
 
-# .getPlotCharacters --------------------------------------------------------
-.getPlotCharacters <- function
-(
-  badQualityWells, configurationNames, Q, demand
-)
+# .getPlotCharacters -----------------------------------------------------------
+.getPlotCharacters <- function(badQualityWells, configurationNames, Q, demand)
 {
   PCH <- kwb.plot:::getPlotCharacterConstants()
-  
-  containsBadQualityWell <- grepl(
-    pattern = paste(badQualityWells, collapse = "|"), 
-    x = configurationNames
-  )
-  
+  containsBadQualityWell <- grepl(pattern = paste(badQualityWells, 
+                                                  collapse = "|"), x = configurationNames)
   pch <- rep(PCH$FILLED_CIRCLE, length(Q))
-  pch[ ! containsBadQualityWell & Q < demand] <- PCH$CIRCLE
+  pch[!containsBadQualityWell & Q < demand] <- PCH$CIRCLE
   pch[containsBadQualityWell & Q < demand] <- PCH$TRIANGLE
   pch[containsBadQualityWell & Q > demand] <- PCH$FILLED_TRIANGLE
-  
   pch
 }
 
 # .defaultLabel ----------------------------------------------------------------
 .defaultLabel <- function(name, pumpsToReplace)
 {
-  paste("Optimisation strategy:", name, "\n", .replacedPumpsInfo(pumpsToReplace))  
+  paste("Optimisation strategy:", name, "\n", .replacedPumpsInfo(pumpsToReplace))
 }
 
 # .replacedPumpsInfo -----------------------------------------------------------
-.replacedPumpsInfo <- function(pumpsToReplace)
+.replacedPumpsInfo <- function(pumpsToReplace) 
 {
-  if (any(pumpsToReplace != "")) {    
+  if (any(pumpsToReplace != "")) {
+    
     sprintf(" ( %s )", paste(pumpsToReplace, collapse = " , "))
-  }
-  else {
+    
+  } else {
+    
     ""
   }
 }
 
 # runOptimisationStrategy ------------------------------------------------------
-runOptimisationStrategy <- function # runOptimisationStrategy
-### runOptimisationStrategy
-(
+
+#' Run Optimisation Strategy
+#' 
+#' @param operationSchemes possible wellfield operation schemes. Default:
+#'   wellFieldOperationSchemes(getNamesOfPumps(\code{configuration}))
+#' 
+#' @return list with elements \emph{energyTotal} and \emph{energyPerPump}
+#' 
+runOptimisationStrategy <- function(
   configuration, 
   newCurvesData,
   optimisationStrategy,
   operationSchemes = wellFieldOperationSchemes(getNamesOfPumps(configuration)),
-  ### possible wellfield operation schemes. Default:
-  ### wellFieldOperationSchemes(getNamesOfPumps(configuration))
   showLivePlot = FALSE
 )
 {
   # Replace pumps if required
-  if(any(optimisationStrategy$pumpsToReplace != "")) {
+  if (any(optimisationStrategy$pumpsToReplace != "")) {
     configuration <- .replacePumpsInConfiguration(
       configuration = configuration,
       newCurvesData = newCurvesData, 
@@ -316,25 +301,20 @@ runOptimisationStrategy <- function # runOptimisationStrategy
     energyTotal = energyTotal, 
     energyPerPump = energyPerPump
   )
-  ### list with elements \emph{energyTotal} and \emph{energyPerPump}
 }
 
 # .replacePumpsInConfiguration -------------------------------------------------
-.replacePumpsInConfiguration <- function
-(
-  configuration,
-  newCurvesData,
-  pumpsToReplace
-)
+.replacePumpsInConfiguration <- function(configuration, newCurvesData, pumpsToReplace)
 {
   pumpCurve <- .getCurveWithReplacedID(
     curveData = newCurvesData$Pump, 
-    pumpsToReplace = pumpsToReplace,
-    prefix = newCurvesData$PumpNamePrefix$PumpCurves)
+    pumpsToReplace = pumpsToReplace, 
+    prefix = newCurvesData$PumpNamePrefix$PumpCurves
+  )
   
   efficiencyCurve <- .getCurveWithReplacedID(
-    curveData = newCurvesData$GlobalPumpEfficiency,
-    pumpsToReplace = pumpsToReplace,
+    curveData = newCurvesData$GlobalPumpEfficiency, 
+    pumpsToReplace = pumpsToReplace, 
     prefix = newCurvesData$PumpNamePrefix$GlobalPumpEfficiency
   )
   
@@ -344,29 +324,24 @@ runOptimisationStrategy <- function # runOptimisationStrategy
   )
   
   configuration
-}  
+}
 
 # .getCurveWithReplacedID ------------------------------------------------------
 .getCurveWithReplacedID <- function(curveData, pumpsToReplace, prefix)
 {
   curve <- curveData[curveData$ID %in% pumpsToReplace, ]
-  curve$ID <- paste(prefix, curve$ID, sep = "")  
-  curve  
+  curve$ID <- paste(prefix, curve$ID, sep = "")
+  curve
 }
 
 # .getEnergyPerPump ------------------------------------------------------------
-.getEnergyPerPump <- function
-(
-  epanetOutput, configuration, schemeID
-)
+.getEnergyPerPump <- function(epanetOutput, configuration, schemeID)
 {
-  # Read simulated flows
   flowsInListForm <- .getFlowsInListForm(
     epanetOutput = epanetOutput, 
     configuration = configuration
   )
   
-  # Read energy report (extended by flows)
   .getExtendedEnergyReport(
     epanetOutput = epanetOutput, 
     schemeID = schemeID, 
@@ -377,31 +352,26 @@ runOptimisationStrategy <- function # runOptimisationStrategy
 # .getFlowsInListForm ----------------------------------------------------------
 .getFlowsInListForm <- function(epanetOutput, configuration)
 {
-  ### To do in kwb.epanet package: rounding should be more relaxed for parameter: "Kw.hr.per.m3"
-  
   flows <- getLinkResults(
-    epanetOutput,
+    epanetOutput, 
     links = getNamesOfPumps(configuration), 
     vars = "q"
-  ) 
+  )
   
-  hsMatrixToListForm(
+  kwb.utils::hsMatrixToListForm(
     df = flows, 
-    keyFields = c("step","variable"),
+    keyFields = c("step", "variable"), 
     colNamePar = "Pump", 
     colNameVal = "Q.m3.per.hour"
-  )  
+  )
 }
 
 # .getExtendedEnergyReport -----------------------------------------------------
-.getExtendedEnergyReport <- function
-(
-  epanetOutput, schemeID, flowsInListForm
-)
+.getExtendedEnergyReport <- function(epanetOutput, schemeID, flowsInListForm)
 {
   energyReport <- reportEnergyUse(epanetOutput)
-  energyReport <- energyReport[energyReport$Percent.Utilization > 0, ]
-  
+  energyReport <- energyReport[energyReport$Percent.Utilization > 
+                                 0, ]
   merge(
     data.frame(opSchemeID = schemeID, energyReport), 
     flowsInListForm[flowsInListForm$step == 1, -(1:2)]
@@ -409,27 +379,23 @@ runOptimisationStrategy <- function # runOptimisationStrategy
 }
 
 # .energyPerPumpToTotalEnergy --------------------------------------------------
-.energyPerPumpToTotalEnergy <- function
-(
-  tmpEnergyPerPump, operationSchemes, schemeID, COL.Q = "Q.m3.per.hour"  
-) 
+.energyPerPumpToTotalEnergy <- function(
+  tmpEnergyPerPump, operationSchemes, schemeID, COL.Q = "Q.m3.per.hour"
+)
 {
-  Q.sum <- sum(tmpEnergyPerPump[[COL.Q]], na.rm = TRUE)  
-  
+  Q.sum <- sum(tmpEnergyPerPump[[COL.Q]], na.rm = TRUE)
   data.frame(
     opSchemeID = schemeID, 
-    PumpConfigName = operationSchemes$Label[operationSchemes$ID == schemeID],
-    Q.m3.per.hour.sum = Q.sum,
-    Average.Efficiency.avg = quotient(
+    PumpConfigName = operationSchemes$Label[operationSchemes$ID == schemeID], 
+    Q.m3.per.hour.sum = Q.sum, 
+    Average.Efficiency.avg = kwb.utils::quotient(
       sum(tmpEnergyPerPump$Average.Efficiency * tmpEnergyPerPump[[COL.Q]]), 
       Q.sum
-    ),
-    Kw.hr.per.m3.avg = sum(
-      quotient(
-        tmpEnergyPerPump$Kw.hr.per.m3 * tmpEnergyPerPump[[COL.Q]],
-        Q.sum
-      )
     ), 
+    Kw.hr.per.m3.avg = sum(kwb.utils::quotient(
+      tmpEnergyPerPump$Kw.hr.per.m3 * tmpEnergyPerPump[[COL.Q]], 
+      Q.sum
+    )), 
     stringsAsFactors = FALSE
   )
 }
@@ -437,7 +403,7 @@ runOptimisationStrategy <- function # runOptimisationStrategy
 # .liveplot --------------------------------------------------------------------
 .liveplot <- function(energyTotal, main, averageDemand)
 {
-  plot(
+  graphics::plot(
     Kw.hr.per.m3.avg ~ Q.m3.per.hour.sum, 
     data = energyTotal, 
     type = "p", 
@@ -445,24 +411,26 @@ runOptimisationStrategy <- function # runOptimisationStrategy
     main = main
   )
   
-  abline(v = averageDemand, col = "grey", lty = 2)  
+  graphics::abline(v = averageDemand, col = "grey", lty = 2)
 }
 
 # wellFieldOperationSchemes ----------------------------------------------------
-wellFieldOperationSchemes <- function # wellFieldOperationSchemes
-### wellFieldOperationSchemes
-(  
+
+#' Well Field Operation Schemes
+#' 
+#' @param pumpNames Vector of \code{pumpNames} (used in EPANET input file section "PUMPS")
+#' @param niceLabels Optionally nice labeling. List with elements \emph{searchPattern} and 
+#'   \emph{searchReplacement}. Default: list(searchPattern = "pmp",
+#'   searchReplacement = "p")
+#' 
+wellFieldOperationSchemes <- function(
   pumpNames, 
-  ### Vector of pumpNames (used in EPANET input file section "PUMPS")
   niceLabels = list(searchPattern = "pmp", searchReplacement = "p")
-  ### Optionally nice labeling. List with elements \emph{searchPattern} and 
-  ### \emph{searchReplacement}. Default: list(searchPattern = "pmp",
-  ### searchReplacement = "p")
 )
 {
   numberOfPumps <- length(pumpNames)
   
-  permutationMatrix <- permutations(
+  permutationMatrix <- e1071::permutations(
     n = 2,                 # Size of the source vector
     r = numberOfPumps,     # Size of the target vectors
     v = c(0,1),            # Source vector.
@@ -500,12 +468,10 @@ wellFieldOperationSchemes <- function # wellFieldOperationSchemes
 }
 
 # setWellFieldOperation --------------------------------------------------------
-setWellFieldOperation <- function # setWellFieldOperation
-### setWellFieldOperation
-(
-  config, 
-  operationScheme  
-)
+
+#' Set Well Field Operation
+#' 
+setWellFieldOperation <- function(config, operationScheme)
 {
   columnNames <- colnames(operationScheme)
   pumpColumnNames <- columnNames[seq_len(ncol(operationScheme) - 3)]
@@ -515,7 +481,7 @@ setWellFieldOperation <- function # setWellFieldOperation
   
   isPumpStatus <- config$STATUS$ID %in% config$PUMPS$ID
                   
-  if(any(isPumpStatus)) {
+  if (any(isPumpStatus)) {
     config$STATUS <- config$STATUS[! isPumpStatus, ] 
   }
   
@@ -531,13 +497,17 @@ setWellFieldOperation <- function # setWellFieldOperation
   names(pumpStatus) <- names(config$STATUS)
   
   config$STATUS <- rbind(config$STATUS, pumpStatus)
+  
   config
 }
 
 # fitnessAdaptedModelConfiguration ---------------------------------------------
-fitnessAdaptedModelConfiguration <- function # called by calibrateModel
-### fitnessAdaptedModelConfiguration
-(
+
+#' Fitness Adapted Model Configuration
+#' 
+#' Called by calibrateModel
+#' 
+fitnessAdaptedModelConfiguration <- function(
   parameterValue, 
   parameterName, 
   configuration, 
@@ -548,10 +518,10 @@ fitnessAdaptedModelConfiguration <- function # called by calibrateModel
 ) 
 {
   # reset graphical parameters on exit
-  graphicalParameters <- par(no.readonly = TRUE)
-  on.exit(par(graphicalParameters))
+  graphicalParameters <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(graphicalParameters))
   
-  calibrationRunNumber <- getGlobally("calibrationRunNumber", default = 0) + 1
+  calibrationRunNumber <- kwb.utils::getGlobally("calibrationRunNumber", default = 0) + 1
   
   indices <- which(configuration$PIPES$ID %in% pipeIDs) 
   
@@ -571,124 +541,144 @@ fitnessAdaptedModelConfiguration <- function # called by calibrateModel
   modelled <- getLinkResults(
     outdat = newconfigurationResult$output,
     links=getNamesOfPumps(newconfiguration),
-    vars = "q")
+    vars = "q"
+  )
   
   if (nrow(measured) >  1) {
     
     modelled <- sapply(
       modelled[,as.character(measured$pumpNames)],
-      function(x){median(replace(x, x == 0, NA), na.rm=TRUE)})
+      function(x) stats::median(replace(x, x == 0, NA), na.rm = TRUE)
+    )
     
     modelled <- data.frame(
       pumpNames = names(modelled), 
-      modelledQ = modelled)
-  } 
-  else {
+      modelledQ = modelled
+    )
     
-    modelled <- median(
+  } else {
+    
+    modelled <- stats::median(
       sapply(
         modelled[, as.character(measured$pumpNames)], 
-        function(x){replace(x, x == 0, NA)}), 
-      na.rm = TRUE)
+        function(x) replace(x, x == 0, NA)
+      ), 
+      na.rm = TRUE
+    )
     
     modelled <- data.frame(
       pumpNames = as.character(measured$pumpNames), 
-      modelledQ = modelled)
+      modelledQ = modelled
+    )
   }
-  
   
   res <- merge(modelled, measured)
   res$Qerror <- res$modelledQ - res$measuredQ
-  res$calibrationRunNumber <- calibrationRunNumber  
-
+  res$calibrationRunNumber <- calibrationRunNumber
   
   pumpNames <- as.character(unique(res$pumpNames))
-  pumpInfo <- data.frame(pumpNames= pumpNames,
-                         colors=rainbow(n = length(pumpNames)),
-                         stringsAsFactors=FALSE)
+  pumpInfo <- data.frame(
+    pumpNames = pumpNames,
+    colors = grDevices::rainbow(n = length(pumpNames)),
+    stringsAsFactors = FALSE
+  )
+  
   pumpInfo$pch <- 1
   pumpInfo$pch[pumpInfo$pumpNames %in% pumpsToCalibrate] <- 16
   pumpInfo$pumpsToCalibrate <- paste(pumpsToCalibrate, sep="", collapse= " & ") 
   
   res <- merge(res, pumpInfo)
   
-  newRes <- rbind(getGlobally("newRes", default = NULL), res)
+  newRes <- rbind(kwb.utils::getGlobally("newRes", default = NULL), res)
   
-  
-  if( showLivePlot==TRUE)
+  if (showLivePlot)
   {
-    par(xpd=TRUE)
+    graphics::par(xpd = TRUE)
     
-    plot(Qerror ~ calibrationRunNumber, 
-         pch = newRes$pch, 
-         col= newRes$colors, 
-         data = newRes, 
-         ylab="Q error (m\u00b3/h)",
-         las = 1)
+    graphics::plot(
+      Qerror ~ calibrationRunNumber, 
+      pch = newRes$pch, 
+      col = newRes$colors, 
+      data = newRes, 
+      ylab ="Q error (m\u00b3/h)",
+      las = 1
+    )
     
-    plotRegion <- getPlotRegionSizeInUserCoords()
-    yOffset <- cmToUserWidthAndHeight(cm = 2)$height
-    legend(x=plotRegion$left+plotRegion$width/2,
-           y=plotRegion$top+yOffset, 
-           xjust = 0.5,          
-           bty = "n",
-           ncol = nrow(pumpInfo),
-           legend =  pumpInfo$pumpNames, 
-           col = pumpInfo$colors,
-           pch = pumpInfo$pch) 
+    plotRegion <- kwb.plot::getPlotRegionSizeInUserCoords()
+    yOffset <- kwb.plot::cmToUserWidthAndHeight(cm = 2)$height
     
-    par(xpd=FALSE)
+    graphics::legend(
+      x = plotRegion$left + plotRegion$width / 2,
+      y = plotRegion$top + yOffset, 
+      xjust = 0.5,          
+      bty = "n",
+      ncol = nrow(pumpInfo),
+      legend = pumpInfo$pumpNames, 
+      col = pumpInfo$colors,
+      pch = pumpInfo$pch
+    ) 
+    
+    graphics::par(xpd = FALSE)
   }
   
-  resToCalibrate <- res[res$pumpNames %in% pumpsToCalibrate,]
-  Qerror_abs <- sum(abs(resToCalibrate$modelledQ-resToCalibrate$measuredQ))/nrow(resToCalibrate)
+  resToCalibrate <- res[res$pumpNames %in% pumpsToCalibrate, ]
+  
+  Qerror_abs <- 
+    sum(abs(resToCalibrate$modelledQ - resToCalibrate$measuredQ)) / 
+    nrow(resToCalibrate)
+  
   Qerror_absAllPumps <- sum(abs(res$Qerror))/nrow(res)
   
-  
-  assignGlobally("calibrationRunNumber", calibrationRunNumber)
-  assignGlobally("newconfiguration", newconfiguration)
-  assignGlobally("newconfigurationResult", newconfigurationResult)
-  assignGlobally("newRes", newRes)
-  assignGlobally("Qerror_abs", Qerror_abs)
-  assignGlobally("Qerror_absAllPumps", Qerror_absAllPumps)
+  kwb.utils::assignGlobally("calibrationRunNumber", calibrationRunNumber)
+  kwb.utils::assignGlobally("newconfiguration", newconfiguration)
+  kwb.utils::assignGlobally("newconfigurationResult", newconfigurationResult)
+  kwb.utils::assignGlobally("newRes", newRes)
+  kwb.utils::assignGlobally("Qerror_abs", Qerror_abs)
+  kwb.utils::assignGlobally("Qerror_absAllPumps", Qerror_absAllPumps)
   
   Qerror_abs
 }
 
 # calibrateModel ---------------------------------------------------------------
-calibrateModel <- function # calibrateModel
-### calibrateModel
-(
+
+#' Calibrate Model
+#' 
+#' @param configuration EPANET parameterisation, e.g. as retrieved by
+#'   readEpanetInputFile()
+#' @param pipeIDs regular expression or name of pipeID(s) to be used for
+#'   calibration
+#' @param measured measurement data for all pumps as data.frame e.g.
+#'   data.frame(pumpNames=c("pmpW1", "pmpW2"), measuredQ=c(140,190))
+#' @param pumpsToCalibrate regular expression or name of pumps to be used for
+#'   calibration: e.g. "pmpW1"
+#' @param parameterName name of ONE EPANET pipe parameters to be calibrated:
+#'   e.g. `Diameter` or `Roughness`
+#' @param parameterRange min/max range of possible calibration parameter values:
+#'   0-1; with parameterRange*cun = newParameterValue, e.g. parameter range =
+#'   0.5 -> 50% reduction of initial value of \code{parameterName} for all
+#'   \code{pipeIDs} defined in calibrateModel()
+#' @param showLivePlot current calibration status is plotted if
+#'   showLivePlot=TRUE. Default: TRUE
+#' @param \dots additional parameters to be passed to
+#'   fitnessAdaptedModelConfiguration()
+#' 
+calibrateModel <- function(
   configuration,
-  ### EPANET parameterisation, e.g. as retrieved by readEpanetInputFile()
-  pipeIDs=NULL,
-  ### regular expression or name of pipeID(s) to be used for calibration
+  pipeIDs = NULL,
   measured,
-  ### measurement data for all pumps as data.frame e.g.
-  ### data.frame(pumpNames=c("pmpW1", "pmpW2"), measuredQ=c(140,190))
-  pumpsToCalibrate=NULL,
-  ###regular expression or name of pumps to be used for calibration: e.g.
-  ###"pmpW1"
-  parameterName="Diameter",
-  ### name of ONE EPANET pipe parameters to be calibrated: e.g. `Diameter` or
-  ### `Roughness`
+  pumpsToCalibrate = NULL,
+  parameterName = "Diameter",
   parameterRange,
-  ### min/max range of possible calibration parameter values: 0-1; with 
-  ### parameterRange*cun = newParameterValue, e.g. parameter range = 0.5 -> 50% 
-  ### reduction of initial value of parameterName for all pipeIDs defined in 
-  ### calibrateModel() 
-  showLivePlot=TRUE, 
-  ### current calibration status is plotted if showLivePlot=TRUE. Default: TRUE
+  showLivePlot = TRUE, 
   ...
-  ### additional parameters to be passed to fitnessAdaptedModelConfiguration()
 ) 
 {
-  
   optResults <- list()
-  calibrationRunNumberStart <- calibrationRunNumber+1
-  if (!is.null(pipeIDs) && !is.null(pumpsToCalibrate))
-  {
-    optResults <- optimise(
+  calibrationRunNumberStart <- calibrationRunNumber + 1
+  
+  if (!is.null(pipeIDs) && !is.null(pumpsToCalibrate)) {
+    
+    optResults <- stats::optimise(
       f = fitnessAdaptedModelConfiguration, 
       interval = parameterRange,
       parameterName = parameterName, 
@@ -699,8 +689,9 @@ calibrateModel <- function # calibrateModel
       showLivePlot = showLivePlot,
       ...
     )
-  } 
-  else {
+    
+  } else {
+    
     fitnessAdaptedModelConfiguration(
       parameterValue = 1, 
       parameterName = "Diameter", 
@@ -716,44 +707,44 @@ calibrateModel <- function # calibrateModel
   cat(sprintf("Avg. absolute Q error (all pumps):%2.6f m\u00b3/h\n", Qerror_absAllPumps))
   
   # Provide global variables as local variables (or create if not existing)
-  liveplot <- getGlobally("liveplot", default = data.frame())
-  calibrationRunNumber <- getGlobally("calibrationRunNumber", default = 0)
-  Qerror_abs <- getGlobally("Qerror_abs", default = 0)
-  Qerror_absAllPumps <- getGlobally("Qerror_absAllPumps", default = 0)
-  newconfiguration <- getGlobally("newconfiguration", default = NULL)
-  newconfigurationResult <- getGlobally("newconfigurationResult", default = NULL)
-  
+  liveplot <- kwb.utils::getGlobally("liveplot", default = data.frame())
+  calibrationRunNumber <- kwb.utils::getGlobally("calibrationRunNumber", default = 0)
+  Qerror_abs <- kwb.utils::getGlobally("Qerror_abs", default = 0)
+  Qerror_absAllPumps <- kwb.utils::getGlobally("Qerror_absAllPumps", default = 0)
+  newconfiguration <- kwb.utils::getGlobally("newconfiguration", default = NULL)
+  newconfigurationResult <- kwb.utils::getGlobally("newconfigurationResult", default = NULL)
   
   ### Save optimisation results in list
-  list(parameterName=parameterName, 
-       pipeIDs=pipeIDs,
-       optimalParameterValue=optResults$minimum, 
-       Qerror_calibratedPumps= optResults$objective, 
-       Qerror_allPumps=Qerror_absAllPumps,
-       epanetConfig=newconfiguration,
-       calibrationRunNumberStart=calibrationRunNumberStart,
-       calibrationRunNumberEnd=calibrationRunNumber 
-  )  
+  list(
+    parameterName=parameterName, 
+    pipeIDs = pipeIDs,
+    optimalParameterValue = optResults$minimum, 
+    Qerror_calibratedPumps = optResults$objective, 
+    Qerror_allPumps = Qerror_absAllPumps,
+    epanetConfig = newconfiguration,
+    calibrationRunNumberStart = calibrationRunNumberStart,
+    calibrationRunNumberEnd = calibrationRunNumber 
+  )
 }
 
 # plotCalibration --------------------------------------------------------------
-plotCalibration <- function # plotCalibration
-### plotCalibration
-(
-  newRes
-  ### expects data.frame object "newRes" as input parameter (is automatically
-  ### produced by calibrateModel(). Required columns: \emph{Qerror},
-  ### \emph{calibrationRunNumber}, \emph{pch}, \emph{colors}, \emph{pumpNames}
-)
+
+#' Plot Calibration
+#' 
+#' @param newRes expects data.frame object "newRes" as input parameter (is automatically
+#'   produced by calibrateModel(). Required columns: \emph{Qerror},
+#'   \emph{calibrationRunNumber}, \emph{pch}, \emph{colors}, \emph{pumpNames}
+#' 
+plotCalibration <- function(newRes)
 {
   PCH <- kwb.plot:::getPlotCharacterConstants()
   
-  graphicalParameters <- par(no.readonly = TRUE)
-  on.exit(par(graphicalParameters))
+  graphicalParameters <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(graphicalParameters))
   
-  par(xpd = TRUE)
+  graphics::par(xpd = TRUE)
   
-  plot(
+  graphics::plot(
     Qerror ~ calibrationRunNumber, 
     pch = newRes$pch, 
     col = newRes$colors, 
@@ -762,36 +753,40 @@ plotCalibration <- function # plotCalibration
     las = 1
   )
   
-  legend(
+  graphics::legend(
     "topright", 
     pch = c(PCH$CIRCLE, PCH$FILLED_CIRCLE), 
     legend = c("uncalibr.", "calibr.")
   )
   
   pumpInfo <- unique(newRes[, c("pumpNames", "colors")])
-  plotRegion <- getPlotRegionSizeInUserCoords()
-  yOffset <- cmToUserWidthAndHeight(cm = 2)$height
+  plotRegion <- kwb.plot::getPlotRegionSizeInUserCoords()
+  yOffset <- kwb.plot::cmToUserWidthAndHeight(cm = 2)$height
   
-  legend(x = plotRegion$left+plotRegion$width/2,
-         y = plotRegion$top+yOffset, 
-         xjust = 0.5,          
-         bty = "n",
-         ncol = nrow(pumpInfo),
-         legend =  pumpInfo$pumpNames, 
-         col = pumpInfo$colors,
-         pch = PCH$FILLED_CIRCLE) 
+  graphics::legend(
+    x = plotRegion$left+plotRegion$width / 2,
+    y = plotRegion$top+yOffset, 
+    xjust = 0.5,          
+    bty = "n",
+    ncol = nrow(pumpInfo),
+    legend =  pumpInfo$pumpNames, 
+    col = pumpInfo$colors,
+    pch = PCH$FILLED_CIRCLE
+  )
 }
 
 # createOptimisationResultsTable -----------------------------------------------
-createOptimisationResultsTable <- function # createOptimisationResultsTable
-### createOptimisationResultsTable
-(
+
+#' Create Optimisation Results Table
+#' 
+#' @param optimisationStrategies average daily water demand in m3/h to be satisfied
+#' @param averageWaterDemand current specific energy demand
+#' @param currentEnergyDemand should only the best solutions be written to data.frame? Default: FALSE
+#' 
+createOptimisationResultsTable <- function(
   optimisationStrategies, 
-  ###average daily water demand in m3/h to be satisfied
   averageWaterDemand, 
-  ###current specific energy demand
   currentEnergyDemand, 
-  ### should only the best solutions be written to data.frame? Default: FALSE
   onlyBestSolutions = FALSE
 )
 {  
@@ -813,8 +808,9 @@ createOptimisationResultsTable <- function # createOptimisationResultsTable
         configTotal$Q.m3.per.hour.sum >= averageWaterDemand
       
       minSpecEnergy <- min(configTotal$Kw.hr.per.m3.avg[condition]) + 0.001
-    } 
-    else {
+      
+    } else {
+      
       minSpecEnergy <- currentEnergyDemand
     }
 
@@ -830,14 +826,16 @@ createOptimisationResultsTable <- function # createOptimisationResultsTable
     bestConfigs <- bestConfigs[decreasingOrder, ] 
     
     # select and rearrange columns
-    columns <- c("configsPerDay", "PumpConfigName", "Q.m3.per.hour.sum", 
-                 "Average.Efficiency.avg", "Kw.hr.per.m3.avg")
+    columns <- c(
+      "configsPerDay", "PumpConfigName", "Q.m3.per.hour.sum", 
+      "Average.Efficiency.avg", "Kw.hr.per.m3.avg"
+    )
     
     bestConfigs <- bestConfigs[, columns]
     
     if (nrow(bestConfigs) > 0) {
       
-      savingsInPercent <- 100*quotient(
+      savingsInPercent <- 100 * kwb.utils::quotient(
         bestConfigs$Kw.hr.per.m3.avg - currentEnergyDemand,
         currentEnergyDemand
       )
@@ -847,13 +845,14 @@ createOptimisationResultsTable <- function # createOptimisationResultsTable
       bestResults <- data.frame(
         ID = index, 
         Strategy = strategy$name, 
-        ReplacedPumps = commaCollapsed(strategy$pumpsToReplace), 
+        ReplacedPumps = kwb.utils::commaCollapsed(strategy$pumpsToReplace), 
         bestConfigs
       )
             
       allBestResults <- rbind(allBestResults, bestResults)
     }
+    
   } # end of for loop
   
   allBestResults
-} 
+}
