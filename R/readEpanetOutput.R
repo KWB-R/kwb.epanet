@@ -50,7 +50,7 @@ getNumberOfPeriods <- function(configuration)
   hydraulic.timestep <- times[times[[1]] == "Hydraulic Timestep", 2]
   duration <- times[times[[1]] == "Duration", 2]
   
-  quotient(
+  kwb.utils::quotient(
     .hhmmssToSeconds(paste(duration, "00", sep = ":")),
     .hhmmssToSeconds(paste(hydraulic.timestep, "00", sep = ":"))
   )  
@@ -206,13 +206,18 @@ getPumpPerformance <- function(inpdata, outdata, pumpnames)
     
     Q <- linkTimeseries$flows[, pumpname]
     
-    H <- approx(
+    H <- stats::approx(
       x = headCurve$X_Value, 
       y = headCurve$Y_Value, 
       xout = Q
     )$y
     
-    Eff <- approx(x=efficiencyCurve$X_Value, y=efficiencyCurve$Y_Value, xout=Q)$y  
+    Eff <- stats::approx(
+      x = efficiencyCurve$X_Value, 
+      y = efficiencyCurve$Y_Value, 
+      xout = Q
+    )$y
+    
     specEn <- H/Eff/3.67
     En <- specEn*Q
     
@@ -267,10 +272,10 @@ plotPumpPerformance <- function(xCols, yCols, pumpPerformanceTimeSeries)
         
     for (yCol in yCols)
     {
-      formula <- as.formula(sprintf("%s ~ %s", yCol, xCol))
+      formula <- stats::as.formula(sprintf("%s ~ %s", yCol, xCol))
       yLabel <- as.character(labels[names(labels)==yCol])
           
-      print(xyplot(
+      print(lattice::xyplot(
         formula, 
         groups = pumpPerformanceTimeSeries$pumpnames, 
         data = pumpPerformanceTimeSeries, 

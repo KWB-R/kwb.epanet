@@ -6,9 +6,9 @@ getPipeCoordinates <- function(inpdat)
 {
   x <- inpdat$PIPES[, c("ID", "Node1", "Node2")]
   x <- merge(x, inpdat$COORDINATES, by.x = "Node1", by.y = "Node")
-  x <- hsRenameColumns(x, list(X_Coord = "Node1.x", Y_Coord = "Node1.y"))
+  x <- kwb.utils::renameColumns(x, list(X_Coord = "Node1.x", Y_Coord = "Node1.y"))
   x <- merge(x, inpdat$COORDINATES, by.x = "Node2", by.y = "Node")
-  x <- hsRenameColumns(x, list(X_Coord = "Node2.x", Y_Coord = "Node2.y"))
+  x <- kwb.utils::renameColumns(x, list(X_Coord = "Node2.x", Y_Coord = "Node2.y"))
   
   rownames(x) <- x$ID
   
@@ -28,7 +28,7 @@ getPipeCoordinates <- function(inpdat)
 getPumpInfo <- function(inpdat)
 {
   pumpinfo <- merge(inpdat$PUMPS, inpdat$COORDINATES, by.x = "Node1", by.y = "Node")
-  pumpinfo <- hsRenameColumns(pumpinfo, list(X_Coord = "Node1.x", Y_Coord = "Node1.y"))
+  pumpinfo <- kwb.utils::renameColumns(pumpinfo, list(X_Coord = "Node1.x", Y_Coord = "Node1.y"))
   rownames(pumpinfo) <- pumpinfo$ID
 
   pumpinfo$Node1.x <- as.numeric(pumpinfo$Node1.x)

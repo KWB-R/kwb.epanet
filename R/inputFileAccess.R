@@ -8,9 +8,9 @@
 #' 
 writeEpanetInputFile <- function(inpdat, inpfile, dbg = FALSE)
 {
-  catIf(dbg, sprintf("Writing EPANET input file to \"%s\"...\n", inpfile))
+  kwb.utils::catIf(dbg, sprintf("Writing EPANET input file to \"%s\"...\n", inpfile))
   writeLines(epanetInputFileLines(inpdat), inpfile)  
-  catIf(dbg, "End of writing EPANET input file.\n")
+  kwb.utils::catIf(dbg, "End of writing EPANET input file.\n")
 }
 
 # epanetInputFileLines ---------------------------------------------------------
@@ -26,7 +26,7 @@ epanetInputFileLines <- function(inpdat, dbg = FALSE)
   
   for (section in names(inpdat)) {
     
-    catIf(dbg, sprintf("Writing section [%s]... ", section))
+    kwb.utils::catIf(dbg, sprintf("Writing section [%s]... ", section))
     
     txtline <- sprintf("[%s]", section)
     txtlines <- c(txtlines, txtline)
@@ -47,7 +47,7 @@ epanetInputFileLines <- function(inpdat, dbg = FALSE)
     
     txtlines <- c(txtlines, "")
     
-    catIf(dbg, "ok.\n")
+    kwb.utils::catIf(dbg, "ok.\n")
   }
   
   txtlines <- c(txtlines, "[END]")
@@ -98,7 +98,7 @@ plotCurves <- function(curves, curveNames = unique(curves$ID), ...)
   curves$X_Value <- as.numeric(curves$X_Value)
   curves$Y_Value <- as.numeric(curves$Y_Value)
   
-  trellis.object <- xyplot(
+  trellis.object <- lattice::xyplot(
     Y_Value ~ X_Value | ID, 
     data = curves, 
     subset = curves$ID %in% curveNames,
@@ -131,7 +131,7 @@ readEpanetInputFile <- function(inpfile, dbg = FALSE)
   result <- list()
 
   for (section in setdiff(availableSections(inpfile), skip)) {
-    catIf(dbg, "Section:", section, "\n")
+    kwb.utils::catIf(dbg, "Section:", section, "\n")
     result[[section]] <- .getSectionFromTextLines(textlines, section)      
   }
   
@@ -228,7 +228,7 @@ getSection <- function(inpfile, sectionName)
     
     numberOfColumns <- length(captions)
     
-    result <- read.table(
+    result <- utils::read.table(
       textConnection(""), 
       col.names = .defaultColumnNames(numberOfColumns), 
       colClasses = "character"

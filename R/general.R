@@ -43,17 +43,17 @@ plotModel <- function(
     ylim <- NULL
   }
   
-  plot(
+  graphics::plot(
     inpdat$COORDINATES$X_Coord, inpdat$COORDINATES$Y_Coord, 
     xlim = xlim, ylim = ylim, asp = 1, pch = pch, cex = cex, xlab = xlab, 
     ylab = ylab, main = main, ...
   )
   
-  points(pumpinfo$Node1.x, pumpinfo$Node1.y, col = "red")
-  text(pumpinfo$Node1.x, pumpinfo$Node1.y, labels = rownames(pumpinfo))
+  graphics::points(pumpinfo$Node1.x, pumpinfo$Node1.y, col = "red")
+  graphics::text(pumpinfo$Node1.x, pumpinfo$Node1.y, labels = rownames(pumpinfo))
   
   pipeXY <- getPipeCoordinates(inpdat)
-  segments(pipeXY$Node1.x, pipeXY$Node1.y, pipeXY$Node2.x, pipeXY$Node2.y)
+  graphics::segments(pipeXY$Node1.x, pipeXY$Node1.y, pipeXY$Node2.x, pipeXY$Node2.y)
   
   if (!is.null(changedPipeIDs))
   {
@@ -62,7 +62,7 @@ plotModel <- function(
     changedNodes <- which(inpdat$COORDINATES$Node %in% c(changedPipes$PIPES$Node1, changedPipes$PIPES$Node2))
     changedPipes$COORDINATES <- changedPipes$COORDINATES[changedNodes,]
     
-    points(
+    graphics::points(
       changedPipes$COORDINATES$X_Coord, 
       changedPipes$COORDINATES$Y_Coord, 
       col = "blue", 
@@ -71,7 +71,7 @@ plotModel <- function(
     
     pipeXY <- getPipeCoordinates(changedPipes)
     
-    segments(
+    graphics::segments(
       pipeXY$Node1.x, 
       pipeXY$Node1.y, 
       pipeXY$Node2.x, 

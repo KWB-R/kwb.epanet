@@ -71,12 +71,12 @@ calculateSpecificEnergyDemand <-  function(
 # .findCombinedSchemes ---------------------------------------------------------
 .findCombinedSchemes <- function(allSchemes, baseScheme, waterDemand, COLNAMES)
 {
-  allSchemes$timeFraction <- quotient(
+  allSchemes$timeFraction <- kwb.utils::quotient(
     waterDemand - allSchemes[[COLNAMES$Q]], 
     baseScheme[[COLNAMES$Q]] - allSchemes[[COLNAMES$Q]]
   )
   
-  combiSchemes <- allSchemes[inRange(allSchemes$timeFraction, 0, 1), ]
+  combiSchemes <- allSchemes[kwb.utils::inRange(allSchemes$timeFraction, 0, 1), ]
   
   x <- combiSchemes$timeFraction
   V1 <- x * baseScheme[[COLNAMES$Q]]
@@ -99,7 +99,7 @@ calculateSpecificEnergyDemand <-  function(
     baseScheme$PumpConfigName, combiSchemes$PumpConfigName, sep = " & "
   )
   
-  removeColumns(combiSchemes, "timeFraction")
+  kwb.utils::removeColumns(combiSchemes, "timeFraction")
 }
 
 # .weightedAverage -------------------------------------------------------------
@@ -131,11 +131,11 @@ plotOptimisationResults <- function(
   x <- totalEnergy$Kw.hr.per.m3.avg       
   y <- totalEnergy$Average.Efficiency.avg
   
-  scatter2D(
+  plot3D::scatter2D(
     x = x, 
     y = y,
     colvar = totalEnergy$Q.m3.per.hour.sum,
-    col = rev(jet.col(n = nrow(totalEnergy))),
+    col = rev(plot3D::jet.col(n = nrow(totalEnergy))),
     pch = pch, 
     xlab = "Specific energy (kWh/m\u00b3)", 
     ylab = "Average efficiency (%)",
@@ -145,7 +145,7 @@ plotOptimisationResults <- function(
     ...
   )
   
-  legend(
+  graphics::legend(
     "topright", pch = c(2, 1, 17, 16), 
     legend = c(
       "< demand & quality possibly not ok",
@@ -159,9 +159,10 @@ plotOptimisationResults <- function(
   specificEnergy <- currentOperation$SpecificEnergy
   
   if (! is.null(specificEnergy) && !is.na(specificEnergy)) {    
-    abline(v = specificEnergy, col = "grey", lty = 2)
-    text(
-      specificEnergy,getPlotRegionSizeInUserCoords()$bottom + 2, 
+    graphics::abline(v = specificEnergy, col = "grey", lty = 2)
+    graphics::text(
+      specificEnergy,
+      kwb.plot::getPlotRegionSizeInUserCoords()$bottom + 2, 
       col = "grey", 
       labels = currentOperation$Label
     )
@@ -169,9 +170,9 @@ plotOptimisationResults <- function(
   
   indices <- which(is.na(totalEnergy$nOn) | totalEnergy$nOn == 1)
   
-  text2D(
+  plot3D::text2D(
     x = x[indices], # * 0.95, 
-    y = y[indices] + cmToUserWidthAndHeight(cm = 0.3)$height, # * 0.95, , 
+    y = y[indices] + kwb.plot::cmToUserWidthAndHeight(cm = 0.3)$height, # * 0.95, , 
     labels = totalEnergy$PumpConfigName[indices], 
     add = TRUE, 
     col = "black",
@@ -357,7 +358,7 @@ runOptimisationStrategy <- function(
     vars = "q"
   )
   
-  hsMatrixToListForm(
+  kwb.utils::hsMatrixToListForm(
     df = flows, 
     keyFields = c("step", "variable"), 
     colNamePar = "Pump", 
@@ -387,11 +388,11 @@ runOptimisationStrategy <- function(
     opSchemeID = schemeID, 
     PumpConfigName = operationSchemes$Label[operationSchemes$ID == schemeID], 
     Q.m3.per.hour.sum = Q.sum, 
-    Average.Efficiency.avg = quotient(
+    Average.Efficiency.avg = kwb.utils::quotient(
       sum(tmpEnergyPerPump$Average.Efficiency * tmpEnergyPerPump[[COL.Q]]), 
       Q.sum
     ), 
-    Kw.hr.per.m3.avg = sum(quotient(
+    Kw.hr.per.m3.avg = sum(kwb.utils::quotient(
       tmpEnergyPerPump$Kw.hr.per.m3 * tmpEnergyPerPump[[COL.Q]], 
       Q.sum
     )), 
@@ -402,7 +403,7 @@ runOptimisationStrategy <- function(
 # .liveplot --------------------------------------------------------------------
 .liveplot <- function(energyTotal, main, averageDemand)
 {
-  plot(
+  graphics::plot(
     Kw.hr.per.m3.avg ~ Q.m3.per.hour.sum, 
     data = energyTotal, 
     type = "p", 
@@ -410,7 +411,7 @@ runOptimisationStrategy <- function(
     main = main
   )
   
-  abline(v = averageDemand, col = "grey", lty = 2)
+  graphics::abline(v = averageDemand, col = "grey", lty = 2)
 }
 
 # wellFieldOperationSchemes ----------------------------------------------------
@@ -429,7 +430,7 @@ wellFieldOperationSchemes <- function(
 {
   numberOfPumps <- length(pumpNames)
   
-  permutationMatrix <- permutations(
+  permutationMatrix <- e1071::permutations(
     n = 2,                 # Size of the source vector
     r = numberOfPumps,     # Size of the target vectors
     v = c(0,1),            # Source vector.
@@ -517,10 +518,10 @@ fitnessAdaptedModelConfiguration <- function(
 ) 
 {
   # reset graphical parameters on exit
-  graphicalParameters <- par(no.readonly = TRUE)
-  on.exit(par(graphicalParameters))
+  graphicalParameters <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(graphicalParameters))
   
-  calibrationRunNumber <- getGlobally("calibrationRunNumber", default = 0) + 1
+  calibrationRunNumber <- kwb.utils::getGlobally("calibrationRunNumber", default = 0) + 1
   
   indices <- which(configuration$PIPES$ID %in% pipeIDs) 
   
@@ -547,7 +548,8 @@ fitnessAdaptedModelConfiguration <- function(
     
     modelled <- sapply(
       modelled[,as.character(measured$pumpNames)],
-      function(x){median(replace(x, x == 0, NA), na.rm=TRUE)})
+      function(x) stats::median(replace(x, x == 0, NA), na.rm = TRUE)
+    )
     
     modelled <- data.frame(
       pumpNames = names(modelled), 
@@ -556,7 +558,7 @@ fitnessAdaptedModelConfiguration <- function(
     
   } else {
     
-    modelled <- median(
+    modelled <- stats::median(
       sapply(
         modelled[, as.character(measured$pumpNames)], 
         function(x) replace(x, x == 0, NA)
@@ -577,7 +579,7 @@ fitnessAdaptedModelConfiguration <- function(
   pumpNames <- as.character(unique(res$pumpNames))
   pumpInfo <- data.frame(
     pumpNames = pumpNames,
-    colors = rainbow(n = length(pumpNames)),
+    colors = grDevices::rainbow(n = length(pumpNames)),
     stringsAsFactors = FALSE
   )
   
@@ -587,13 +589,13 @@ fitnessAdaptedModelConfiguration <- function(
   
   res <- merge(res, pumpInfo)
   
-  newRes <- rbind(getGlobally("newRes", default = NULL), res)
+  newRes <- rbind(kwb.utils::getGlobally("newRes", default = NULL), res)
   
   if (showLivePlot)
   {
-    par(xpd = TRUE)
+    graphics::par(xpd = TRUE)
     
-    plot(
+    graphics::plot(
       Qerror ~ calibrationRunNumber, 
       pch = newRes$pch, 
       col = newRes$colors, 
@@ -602,21 +604,21 @@ fitnessAdaptedModelConfiguration <- function(
       las = 1
     )
     
-    plotRegion <- getPlotRegionSizeInUserCoords()
-    yOffset <- cmToUserWidthAndHeight(cm = 2)$height
+    plotRegion <- kwb.plot::getPlotRegionSizeInUserCoords()
+    yOffset <- kwb.plot::cmToUserWidthAndHeight(cm = 2)$height
     
-    legend(
+    graphics::legend(
       x = plotRegion$left + plotRegion$width / 2,
       y = plotRegion$top + yOffset, 
       xjust = 0.5,          
       bty = "n",
       ncol = nrow(pumpInfo),
-      legend =  pumpInfo$pumpNames, 
+      legend = pumpInfo$pumpNames, 
       col = pumpInfo$colors,
       pch = pumpInfo$pch
     ) 
     
-    par(xpd = FALSE)
+    graphics::par(xpd = FALSE)
   }
   
   resToCalibrate <- res[res$pumpNames %in% pumpsToCalibrate, ]
@@ -627,12 +629,12 @@ fitnessAdaptedModelConfiguration <- function(
   
   Qerror_absAllPumps <- sum(abs(res$Qerror))/nrow(res)
   
-  assignGlobally("calibrationRunNumber", calibrationRunNumber)
-  assignGlobally("newconfiguration", newconfiguration)
-  assignGlobally("newconfigurationResult", newconfigurationResult)
-  assignGlobally("newRes", newRes)
-  assignGlobally("Qerror_abs", Qerror_abs)
-  assignGlobally("Qerror_absAllPumps", Qerror_absAllPumps)
+  kwb.utils::assignGlobally("calibrationRunNumber", calibrationRunNumber)
+  kwb.utils::assignGlobally("newconfiguration", newconfiguration)
+  kwb.utils::assignGlobally("newconfigurationResult", newconfigurationResult)
+  kwb.utils::assignGlobally("newRes", newRes)
+  kwb.utils::assignGlobally("Qerror_abs", Qerror_abs)
+  kwb.utils::assignGlobally("Qerror_absAllPumps", Qerror_absAllPumps)
   
   Qerror_abs
 }
@@ -676,7 +678,7 @@ calibrateModel <- function(
   
   if (!is.null(pipeIDs) && !is.null(pumpsToCalibrate)) {
     
-    optResults <- optimise(
+    optResults <- stats::optimise(
       f = fitnessAdaptedModelConfiguration, 
       interval = parameterRange,
       parameterName = parameterName, 
@@ -705,12 +707,12 @@ calibrateModel <- function(
   cat(sprintf("Avg. absolute Q error (all pumps):%2.6f m\u00b3/h\n", Qerror_absAllPumps))
   
   # Provide global variables as local variables (or create if not existing)
-  liveplot <- getGlobally("liveplot", default = data.frame())
-  calibrationRunNumber <- getGlobally("calibrationRunNumber", default = 0)
-  Qerror_abs <- getGlobally("Qerror_abs", default = 0)
-  Qerror_absAllPumps <- getGlobally("Qerror_absAllPumps", default = 0)
-  newconfiguration <- getGlobally("newconfiguration", default = NULL)
-  newconfigurationResult <- getGlobally("newconfigurationResult", default = NULL)
+  liveplot <- kwb.utils::getGlobally("liveplot", default = data.frame())
+  calibrationRunNumber <- kwb.utils::getGlobally("calibrationRunNumber", default = 0)
+  Qerror_abs <- kwb.utils::getGlobally("Qerror_abs", default = 0)
+  Qerror_absAllPumps <- kwb.utils::getGlobally("Qerror_absAllPumps", default = 0)
+  newconfiguration <- kwb.utils::getGlobally("newconfiguration", default = NULL)
+  newconfigurationResult <- kwb.utils::getGlobally("newconfigurationResult", default = NULL)
   
   ### Save optimisation results in list
   list(
@@ -737,12 +739,12 @@ plotCalibration <- function(newRes)
 {
   PCH <- kwb.plot:::getPlotCharacterConstants()
   
-  graphicalParameters <- par(no.readonly = TRUE)
-  on.exit(par(graphicalParameters))
+  graphicalParameters <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(graphicalParameters))
   
-  par(xpd = TRUE)
+  graphics::par(xpd = TRUE)
   
-  plot(
+  graphics::plot(
     Qerror ~ calibrationRunNumber, 
     pch = newRes$pch, 
     col = newRes$colors, 
@@ -751,17 +753,17 @@ plotCalibration <- function(newRes)
     las = 1
   )
   
-  legend(
+  graphics::legend(
     "topright", 
     pch = c(PCH$CIRCLE, PCH$FILLED_CIRCLE), 
     legend = c("uncalibr.", "calibr.")
   )
   
   pumpInfo <- unique(newRes[, c("pumpNames", "colors")])
-  plotRegion <- getPlotRegionSizeInUserCoords()
-  yOffset <- cmToUserWidthAndHeight(cm = 2)$height
+  plotRegion <- kwb.plot::getPlotRegionSizeInUserCoords()
+  yOffset <- kwb.plot::cmToUserWidthAndHeight(cm = 2)$height
   
-  legend(
+  graphics::legend(
     x = plotRegion$left+plotRegion$width / 2,
     y = plotRegion$top+yOffset, 
     xjust = 0.5,          
@@ -833,7 +835,7 @@ createOptimisationResultsTable <- function(
     
     if (nrow(bestConfigs) > 0) {
       
-      savingsInPercent <- 100*quotient(
+      savingsInPercent <- 100 * kwb.utils::quotient(
         bestConfigs$Kw.hr.per.m3.avg - currentEnergyDemand,
         currentEnergyDemand
       )
@@ -843,7 +845,7 @@ createOptimisationResultsTable <- function(
       bestResults <- data.frame(
         ID = index, 
         Strategy = strategy$name, 
-        ReplacedPumps = commaCollapsed(strategy$pumpsToReplace), 
+        ReplacedPumps = kwb.utils::commaCollapsed(strategy$pumpsToReplace), 
         bestConfigs
       )
             

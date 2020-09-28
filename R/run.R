@@ -7,7 +7,7 @@
 setEpanetInstallationPath <- function(epanet.dir)  
 {
   if (! is.null(epanet.dir) && ! file.exists (epanet.dir)) {
-    stop("The folder ", hsQuoteChr(epanet.dir), "does not exist.")
+    stop("The folder ", kwb.utils::hsQuoteChr(epanet.dir), "does not exist.")
   }
   
   options(kwb.db.epanet.dir = epanet.dir)    
@@ -22,13 +22,13 @@ getEpanetInstallationPath <- function()
   epanet.dir <- getOption("kwb.db.epanet.dir")
   
   if (! is.null(epanet.dir) && ! file.exists (epanet.dir)) {
-    stop("The folder ", hsQuoteChr(epanet.dir), "does not exist.")
+    stop("The folder ", kwb.utils::hsQuoteChr(epanet.dir), "does not exist.")
     options(kwb.db.epanet.dir = NULL)
   }
   
   if (is.null(epanet.dir)) {
     
-    defaultDirectories <- file.path(defaultWindowsProgramFolders(), "EPANET2")
+    defaultDirectories <- file.path(kwb.utils::defaultWindowsProgramFolders(), "EPANET2")
     
     existing <- which(file.exists(defaultDirectories))
     
@@ -40,7 +40,7 @@ getEpanetInstallationPath <- function()
       
       stop(
         "I did not find the EPANET installation path. I was looking for:\n  ",
-        paste(hsQuoteChr(defaultDirectories), collapse="\n  "), "\n",
+        paste(kwb.utils::hsQuoteChr(defaultDirectories), collapse="\n  "), "\n",
         "Please use 'setEpanetInstallationPath' to specify the path to an ",
         "existing EPANET installation folder.")
     }
@@ -59,8 +59,8 @@ runEpanetGUI <- function(inpfile = "", epanet.dir = getEpanetInstallationPath())
 {
   epanet.exe <- .stopIfEpanetExeDoesNotExist(epanet.dir, "epanet2w.exe")
   
-  hsSystem(
-    sprintf("%s %s", shQuote(epanet.exe), shQuote(windowsPath(inpfile))),
+  kwb.utils::hsSystem(
+    sprintf("%s %s", shQuote(epanet.exe), shQuote(kwb.utils::windowsPath(inpfile))),
     wait = FALSE
   )
 }
@@ -145,13 +145,13 @@ runEpanet <- function(
 {
   epanet.exe <- .stopIfEpanetExeDoesNotExist(epanet.dir, "epanet2d.exe")
   
-  tdir <- createDirAndReturnPath(file.path(tempdir(), "epanet"), dbg = dbg)
+  tdir <- kwb.utils::createDirectory(file.path(tempdir(), "epanet"), dbg = dbg)
   
   target.file <- file.path(tdir, basename(inpfile))
   
   # give warning (but overwrite anyway!) if file already exists
   if (file.exists(target.file)) {
-    catIf(
+    kwb.utils::catIf(
       dbg, 
       sprintf("*** There is already a file named \"%s\"", target.file),
       "in the target folder. It will be overwritten.\n"
@@ -247,7 +247,7 @@ runEpanetOnCommandLine <- function(
   
   if (dbg) {
     # hsShell echoes the command line onto the screen
-    output <- hsShell(commandLine = commandLine, intern = intern)
+    output <- kwb.utils::hsShell(commandLine = commandLine, intern = intern)
   } else {
     output <- shell(commandLine, intern = intern)
   }

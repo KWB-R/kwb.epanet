@@ -58,7 +58,7 @@ writePumpCurves <- function(
   dbg = TRUE
 )
 {  
-  catIf(dbg, "Writing pump curves...\n")
+  kwb.utils::catIf(dbg, "Writing pump curves...\n")
   
   .writeCurves(
     epanetConfig = epanetConfig, 
@@ -90,7 +90,7 @@ writeDrawdownCurves <- function(
   dbg = TRUE
 )
 {
-  catIf(dbg, "Writing drawdown curves...\n")
+  kwb.utils::catIf(dbg, "Writing drawdown curves...\n")
   
   .writeCurves(
     epanetConfig = epanetConfig, 
@@ -120,7 +120,7 @@ writeEfficiencyCurves <- function(
   dbg = TRUE
 )
 { 
-  catIf(dbg, "Writing efficiency curves...\n")
+  kwb.utils::catIf(dbg, "Writing efficiency curves...\n")
   
   .writeCurves(
     epanetConfig = epanetConfig, 
@@ -211,7 +211,7 @@ writeEfficiencyCurves <- function(
       
     } else {
       
-      restConfig <- hsAddMissingCols(energyConfig, columns.3.4, fill.value = "")
+      restConfig <- kwb.utils::hsAddMissingCols(energyConfig, columns.3.4, fill.value = "")
     }
     
   } else {
@@ -219,8 +219,10 @@ writeEfficiencyCurves <- function(
     restConfig <- NULL
   }
   
-  safeRowBind(restConfig, .configurePumpEfficiency(pumpIDs = provided, 
-                                                   curveNamePrefix = curveNamePrefix))
+  kwb.utils::safeRowBind(restConfig, .configurePumpEfficiency(
+    pumpIDs = provided, 
+    curveNamePrefix = curveNamePrefix
+  ))
 }
 
 # .configurePumpEfficiency -----------------------------------------------------
@@ -264,16 +266,16 @@ writeEfficiencyCurves <- function(
 {
   objectName <- c(pump = "pump", drawdown = "well", efficiency = "pump")[curveType]
   
-  catIf(dbg, "Checking if", curveType, "curves are supplied for all ")
-  catIf(dbg, .plural(objectName), "in section", hsQuoteChr(sectionName))
-  catIf(dbg, "... ")
+  kwb.utils::catIf(dbg, "Checking if", curveType, "curves are supplied for all ")
+  kwb.utils::catIf(dbg, .plural(objectName), "in section", kwb.utils::hsQuoteChr(sectionName))
+  kwb.utils::catIf(dbg, "... ")
   
   undefined <- setdiff(required, provided)
   numberOfUndefined <- length(undefined)
   noneDefined <- numberOfUndefined == length(required)
   
   if (numberOfUndefined == 0) {
-    catIf(dbg, "Ok!\n")
+    kwb.utils::catIf(dbg, "Ok!\n")
     return()
   }
   
@@ -282,11 +284,11 @@ writeEfficiencyCurves <- function(
     messageText <- paste(
       paste(
         "No", objectName, "ID in section", 
-        hsQuoteChr(sectionName), "defined that matches the names of the given", 
+        kwb.utils::hsQuoteChr(sectionName), "defined that matches the names of the given", 
         curveType, "curves:"
       ), 
       paste(
-        .firstLetterUpperCase(objectName), "IDs in", hsQuoteChr(sectionName), 
+        .firstLetterUpperCase(objectName), "IDs in", kwb.utils::hsQuoteChr(sectionName), 
         "section:"
       ), 
       .spaceSeparatedAndCollapsed(required), 
@@ -297,21 +299,21 @@ writeEfficiencyCurves <- function(
     stop(messageText)
   }
   
-  catIf(dbg, "Warning!!\n")
-  catIf(dbg, "No", curveType, "curves available for ")
-  catIf(dbg, ifelse(noneDefined, "ANY of the defined ", "the following "))
-  catIf(dbg, .plural(objectName))
-  catIf(dbg, "! Check name ids:\n")
-  catIf(dbg, .firstLetterUpperCase(.plural(objectName)))
-  catIf(dbg, " defined in epanetConfig section", hsQuoteChr(sectionName))
-  catIf(dbg, ifelse(noneDefined, "", paste("but without a", curveType, "curve")))
-  catIf(dbg, ":\n")
-  catIf(dbg, .spaceSeparatedAndCollapsed(undefined))
-  catIf(dbg, "\n")
-  catIf(dbg, "Available", objectName, "names in input data ")
-  catIf(dbg, hsQuoteChr(dataType))
-  catIf(dbg, ":\n")
-  catIf(dbg, .spaceSeparatedAndCollapsed(provided))
+  kwb.utils::catIf(dbg, "Warning!!\n")
+  kwb.utils::catIf(dbg, "No", curveType, "curves available for ")
+  kwb.utils::catIf(dbg, ifelse(noneDefined, "ANY of the defined ", "the following "))
+  kwb.utils::catIf(dbg, .plural(objectName))
+  kwb.utils::catIf(dbg, "! Check name ids:\n")
+  kwb.utils::catIf(dbg, .firstLetterUpperCase(.plural(objectName)))
+  kwb.utils::catIf(dbg, " defined in epanetConfig section", kwb.utils::hsQuoteChr(sectionName))
+  kwb.utils::catIf(dbg, ifelse(noneDefined, "", paste("but without a", curveType, "curve")))
+  kwb.utils::catIf(dbg, ":\n")
+  kwb.utils::catIf(dbg, .spaceSeparatedAndCollapsed(undefined))
+  kwb.utils::catIf(dbg, "\n")
+  kwb.utils::catIf(dbg, "Available", objectName, "names in input data ")
+  kwb.utils::catIf(dbg, kwb.utils::hsQuoteChr(dataType))
+  kwb.utils::catIf(dbg, ":\n")
+  kwb.utils::catIf(dbg, .spaceSeparatedAndCollapsed(provided))
 }
 
 # .firstLetterUpperCase --------------------------------------------------------
@@ -329,7 +331,7 @@ writeEfficiencyCurves <- function(
 .deleteCurvesIf <- function(deleteOldCurves, epanetConfig, dbg = TRUE)
 {
   if (deleteOldCurves & !is.null(epanetConfig$CURVES)) {
-    catIf(dbg, "Deleting CURVES section...\n")
+    kwb.utils::catIf(dbg, "Deleting CURVES section...\n")
     epanetConfig$CURVES <- epanetConfig$CURVES[FALSE, ]
   }
   

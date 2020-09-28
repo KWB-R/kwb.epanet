@@ -57,7 +57,7 @@ readResultsFromReportFile <- function(reportFile, warn = TRUE)
   col.number <- length(headerInfo$variableNames) + 2
   col.names <- paste("V", seq_len(col.number), sep = "")
   
-  dataFrame <- csvTextToDataFrame(
+  dataFrame <- kwb.utils::csvTextToDataFrame(
     textblock, fill = TRUE, col.names = col.names, 
     stringsAsFactors = FALSE
   )
@@ -76,7 +76,7 @@ readResultsFromReportFile <- function(reportFile, warn = TRUE)
     
   } else {
     
-    headerRow <- hsTrim(reportLines[indices[1]])
+    headerRow <- kwb.utils::hsTrim(reportLines[indices[1]])
     
     data.frame(
       Statistic = strsplit(headerRow, " ")[[1]][1], 
@@ -95,8 +95,8 @@ readResultsFromReportFile <- function(reportFile, warn = TRUE)
 # .extractVariableAndUnitNames -------------------------------------------------
 .extractVariableAndUnitNames <- function(reportLines, index)
 {
-  variableNames <- hsTrim(reportLines[index + 2])
-  unitNames <- hsTrim(reportLines[index + 3])
+  variableNames <- kwb.utils::hsTrim(reportLines[index + 2])
+  unitNames <- kwb.utils::hsTrim(reportLines[index + 3])
   variableNames <- strsplit(variableNames, " ")[[1]]
   unitNames <- strsplit(unitNames, " ")[[1]][-1]
   list(variableNames = variableNames, unitNames = unitNames)
