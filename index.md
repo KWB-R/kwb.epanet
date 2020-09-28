@@ -5,7 +5,7 @@
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/kwb.epanet)]()
 
 Functions enabling the reading and writing of
-EPANET (http://www.epa.gov/nrmrl/wswrd/dw/epanet.html) input files and
+EPANET 2 (https://www.epa.gov/water-research/epanet) input files and
 reading of output files.
 
 ## Installation

@@ -14,7 +14,7 @@ author <- list(name = "Hauke Sonnenberg",
 pkg <- list(name = "kwb.epanet",
             title = "R Package for Interfacing EPANET",
             desc  = paste0("Functions enabling the reading and writing of ", 
-                           "EPANET (http://www.epa.gov/nrmrl/wswrd/dw/epanet.html) ",
+                           "EPANET 2 (https://www.epa.gov/water-research/epanet) ",
                            "input files and reading of output files."))
 
 usethis::create_package(path = file.path("..", pkg$name))
