@@ -3,7 +3,7 @@
 #' Set Epanet Installation Path
 #' 
 #' @param epanet.dir full path to MS Access database or ODBC database name
-#' 
+#' @export
 setEpanetInstallationPath <- function(epanet.dir)  
 {
   if (! is.null(epanet.dir) && ! file.exists (epanet.dir)) {
@@ -16,7 +16,7 @@ setEpanetInstallationPath <- function(epanet.dir)
 # getEpanetInstallationPath ----------------------------------------------------
 
 #' Get Epanet Installation Path
-#' 
+#' @export
 getEpanetInstallationPath <- function() 
 {
   epanet.dir <- getOption("kwb.db.epanet.dir")
@@ -54,7 +54,7 @@ getEpanetInstallationPath <- function()
 # runEpanetGUI -----------------------------------------------------------------
 
 #' Run Epanet GUI
-#' 
+#' @export
 runEpanetGUI <- function(inpfile = "", epanet.dir = getEpanetInstallationPath())
 {
   epanet.exe <- .stopIfEpanetExeDoesNotExist(epanet.dir, "epanet2w.exe")
@@ -93,7 +93,7 @@ runEpanetGUI <- function(inpfile = "", epanet.dir = getEpanetInstallationPath())
 #'   \emph{read.energyUse}, \emph{read.dynamicResults}, \emph{read.epilog}, see
 #'   there.
 #' @param dbg if TRUE, debug messages are shown. Default: FALSE  
-#' 
+#' @export
 runEpanetConfiguration <- function(
   inpdat,
   name = "tmpEpanet",
@@ -132,7 +132,7 @@ runEpanetConfiguration <- function(
 #'   such as: \emph{read.prolog}, \emph{read.energyUse},
 #'   \emph{read.dynamicResults}, \emph{read.epilog}, see there.
 #' @param dbg if TRUE, debug messages are shown. Default: FALSE
-#' 
+#' @export
 runEpanet <- function(
   inpfile, 
   returnOutput = FALSE,
@@ -226,7 +226,7 @@ checkReportFileForErrors <- function(reportFile)
 #' 
 #' @param write.output if TRUE, EPANET will write a binary output file, else not
 #' @param dbg if TRUE, debug messages are shown. Default: FALSE  
-#' 
+#' @export
 runEpanetOnCommandLine <- function(
   inpfile,
   epanet.exe,

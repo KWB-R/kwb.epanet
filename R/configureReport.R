@@ -39,7 +39,7 @@
 #'   \code{\link{reportVariable}}, e.g. list(reportVariable(name = "VELOCITY",
 #'   above = 3.0, precision = 4), reportVariable(name = "F-FACTOR", precision =
 #'   4)). Default: \code{\link{defaultReportVariables}}
-#' 
+#' @export
 setReportOptions <- function(
   configuration, 
   pagesize = 0, 
@@ -148,7 +148,7 @@ setReportOptions <- function(
 #' 
 #' @return list of report variable definitions as returned by
 #'   \code{\link{reportVariable}}
-#' 
+#' @export
 defaultReportVariables <- function() 
 {
   list(
@@ -182,7 +182,7 @@ defaultReportVariables <- function()
 #'   will be reported on  
 #' @param precision the variable will be reported on with the given \code{precision} (number of
 #'   decimal places). Default: 2
-#' 
+#' @export
 reportVariable <- function(
   name = "Elevation", 
   yes = TRUE, 

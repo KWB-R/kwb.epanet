@@ -9,7 +9,7 @@
 #'   "")
 #' @param deleteOldCurves should all curves in 'epanetConfig' be deleted before
 #'   writing?
-#' 
+#' @export
 writeCurves <- function(
   epanetConfig,
   pumpCurves = NULL, 
@@ -49,7 +49,7 @@ writeCurves <- function(
 #' @param TDH data.frame(ID, X_Value, Y_Value)
 #' 
 #' @return Modified EPANET configuration
-#' 
+#' @export
 writePumpCurves <- function(
   epanetConfig,
   TDH, 
@@ -81,7 +81,7 @@ writePumpCurves <- function(
 #'   deleted before adding new ones
 #' 
 #' @return Modified EPANET configuration  
-#' 
+#' @export
 writeDrawdownCurves <- function(
   epanetConfig,
   DD, 
@@ -111,7 +111,7 @@ writeDrawdownCurves <- function(
 #' @param Eff data.frame(ID, X_Value, Y_Value)
 #' 
 #' @return Modified EPANET configuration  
-#' 
+#' @export
 writeEfficiencyCurves <- function(
   epanetConfig,
   Eff, 
