@@ -1,6 +1,6 @@
 Package: kwb.epanet
 Title: R Package for Interfacing EPANET
-Version: 0.2.0.9000
+Version: 0.2.0
 Authors@R: 
     c(person(given = "Hauke",
              family = "Sonnenberg",
