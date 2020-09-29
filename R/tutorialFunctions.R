@@ -430,7 +430,7 @@ wellFieldOperationSchemes <- function(
 {
   numberOfPumps <- length(pumpNames)
   
-  permutationMatrix <- e1071::permutations(
+  permutationMatrix <- gtools::permutations(
     n = 2,                 # Size of the source vector
     r = numberOfPumps,     # Size of the target vectors
     v = c(0,1),            # Source vector.
