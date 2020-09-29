@@ -13,6 +13,13 @@ runEpanetOnCommandLine(
 )
 }
 \arguments{
+\item{inpfile}{path to EPANET input file}
+
+\item{epanet.exe}{path to EPANET executable}
+
+\item{intern}{a logical, indicates whether to make the output of the command an R object.
+(default: FALSE)}
+
 \item{write.output}{if TRUE, EPANET will write a binary output file, else not}
 
 \item{dbg}{if TRUE, debug messages are shown. Default: FALSE}

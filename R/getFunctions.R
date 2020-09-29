@@ -1,7 +1,7 @@
 # getPipeCoordinates -----------------------------------------------------------
 
 #' Get Pipe Coordinates
-#' 
+#' @param inpdat imported EPANET file (as retrieved by \code{readEpanetInputFile})  
 #' @export
 getPipeCoordinates <- function(inpdat)
 {
@@ -25,7 +25,7 @@ getPipeCoordinates <- function(inpdat)
 # getPumpInfo ------------------------------------------------------------------
 
 #' Get Pump Info
-#' 
+#' @param inpdat imported EPANET file (as retrieved by \code{readEpanetInputFile})  
 #' @export
 getPumpInfo <- function(inpdat)
 {
@@ -42,8 +42,12 @@ getPumpInfo <- function(inpdat)
 # getNamesOfObjects ------------------------------------------------------------
 
 #' Get Names Of Objects
-#' 
-#' @export
+#' @param inpdat imported EPANET file (as retrieved by \code{readEpanetInputFile})  
+#' @param section section
+#' @param pattern optional filter pattern (default: ".*")
+#' @keywords internal 
+#' @noRd
+#' @noMd
 getNamesOfObjects <- function(inpdat, section, pattern = ".*")
 {
   grep(pattern, unique(inpdat[[section]]$ID), value=TRUE)
@@ -52,7 +56,8 @@ getNamesOfObjects <- function(inpdat, section, pattern = ".*")
 # getNamesOfCurves -------------------------------------------------------------
 
 #' Get Names Of Curves
-#' 
+#' @param inpdat imported EPANET file (as retrieved by \code{readEpanetInputFile})  
+#' @param pattern optional filter pattern (default: ".*")
 #' @export
 getNamesOfCurves <- function(inpdat, pattern = ".*")
 {
@@ -62,7 +67,8 @@ getNamesOfCurves <- function(inpdat, pattern = ".*")
 # getNamesOfJunctions ----------------------------------------------------------
 
 #' Get Names Of Junctions
-#' 
+#' @param inpdat imported EPANET file (as retrieved by \code{readEpanetInputFile})   
+#' @param pattern optional filter pattern (default: ".*")
 #' @export
 getNamesOfJunctions <- function(inpdat, pattern = ".*")
 {
@@ -72,7 +78,8 @@ getNamesOfJunctions <- function(inpdat, pattern = ".*")
 # getNamesOfReservoirs ---------------------------------------------------------
 
 #' Get Names Of Reservoirs
-#' 
+#' @param inpdat imported EPANET file (as retrieved by \code{readEpanetInputFile})  
+#' @param pattern optional filter pattern (default: ".*")
 #' @export
 getNamesOfReservoirs <- function(inpdat, pattern = ".*")
 {
@@ -82,7 +89,8 @@ getNamesOfReservoirs <- function(inpdat, pattern = ".*")
 # getNamesOfTanks --------------------------------------------------------------
 
 #' Get Names Of Tanks
-#'
+#' @param inpdat imported EPANET file (as retrieved by \code{readEpanetInputFile})  
+#' @param pattern optional filter pattern (default: ".*")
 #' @export 
 getNamesOfTanks <- function(inpdat, pattern = ".*")
 {
@@ -92,7 +100,8 @@ getNamesOfTanks <- function(inpdat, pattern = ".*")
 # getNamesOfPipes --------------------------------------------------------------
 
 #' Get Names Of Pipes
-#' 
+#' @param inpdat imported EPANET file (as retrieved by \code{readEpanetInputFile})  
+#' @param pattern optional filter pattern (default: ".*")
 #' @export
 getNamesOfPipes <- function(inpdat, pattern = ".*")
 {
@@ -102,7 +111,8 @@ getNamesOfPipes <- function(inpdat, pattern = ".*")
 # getNamesOfPumps --------------------------------------------------------------
 
 #' Get Names Of Pumps
-#' 
+#' @param inpdat imported EPANET file (as retrieved by \code{readEpanetInputFile})  
+#' @param pattern optional filter pattern (default: ".*")
 #' @export
 
 getNamesOfPumps <- function(inpdat, pattern = ".*")
@@ -113,7 +123,8 @@ getNamesOfPumps <- function(inpdat, pattern = ".*")
 # getNamesOfValves -------------------------------------------------------------
 
 #' Get Names Of Valves
-#' 
+#' @param inpdat imported EPANET file (as retrieved by \code{readEpanetInputFile})  
+#' @param pattern optional filter pattern (default: ".*")
 #' @export
 getNamesOfValves <- function(inpdat, pattern = ".*")
 {

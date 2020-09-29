@@ -6,6 +6,16 @@
 \usage{
 setWellFieldOperation(config, operationScheme)
 }
+\arguments{
+\item{config}{EPANET \code{configuration}, representing an EPANET
+input \code{file}, as returned by \code{\link{readEpanetInputFile}}}
+
+\item{operationScheme}{one possible wellfield operation scheme
+(e.g. wellFieldOperationSchemes(getNamesOfPumps(\code{configuration})))}
+}
+\value{
+config with modified well field operation rules
+}
 \description{
 Set Well Field Operation
 }

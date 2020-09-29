@@ -11,6 +11,16 @@ calculateSpecificEnergyDemand(
     "Average.Efficiency.avg")
 )
 }
+\arguments{
+\item{waterDemand}{minimum constraint for water demand}
+
+\item{totalEnergy}{list element "energyTotal", as retrieved by
+\code{runOptimisationStrategy}}
+
+\item{COLNAMES}{list with elements \emph{Q}, \emph{E}, \emph{Eff}, corresponding to
+discharge, energy demand and efficiency, respectively. Default:
+list(Q = "Q.m3.per.hour.sum", E = "Kw.hr.per.m3.avg", Eff = "Average.Efficiency.avg")}
+}
 \value{
 list with elements \emph{Q}, \emph{E}, \emph{Eff}, holding the column
 names of \emph{totalEnergy}, corresponding to discharge, energy demand and

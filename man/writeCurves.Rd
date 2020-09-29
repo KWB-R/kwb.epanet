@@ -14,6 +14,8 @@ writeCurves(
 )
 }
 \arguments{
+\item{epanetConfig}{EPANET configuration, as retrieved by \code{readEpanetInputFile}}
+
 \item{pumpCurves}{list(data = data.frame(ID, X_Value, Y_Value), label = "")}
 
 \item{efficiencyCurves}{list(data = data.frame(ID, X_Value, Y_Value), label =
@@ -24,6 +26,8 @@ writeCurves(
 
 \item{deleteOldCurves}{should all curves in 'epanetConfig' be deleted before
 writing?}
+
+\item{dbg}{show debug messages? (default: TRUE)}
 }
 \description{
 Write Curves

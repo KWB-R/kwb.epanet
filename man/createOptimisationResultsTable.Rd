@@ -17,6 +17,8 @@ createOptimisationResultsTable(
 \item{averageWaterDemand}{current specific energy demand}
 
 \item{currentEnergyDemand}{should only the best solutions be written to data.frame? Default: FALSE}
+
+\item{onlyBestSolutions}{return only best solutions? (default: FALSE)}
 }
 \description{
 Create Optimisation Results Table

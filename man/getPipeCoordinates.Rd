@@ -6,6 +6,9 @@
 \usage{
 getPipeCoordinates(inpdat)
 }
+\arguments{
+\item{inpdat}{imported EPANET file (as retrieved by \code{readEpanetInputFile})}
+}
 \description{
 Get Pipe Coordinates
 }

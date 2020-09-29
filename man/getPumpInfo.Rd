@@ -6,6 +6,9 @@
 \usage{
 getPumpInfo(inpdat)
 }
+\arguments{
+\item{inpdat}{imported EPANET file (as retrieved by \code{readEpanetInputFile})}
+}
 \description{
 Get Pump Info
 }

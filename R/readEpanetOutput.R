@@ -3,7 +3,8 @@
 #' Size of Binary Output File
 #' 
 #' Size of binary output file in Bytes, kB (rounded), MB (rounded)
-#'
+#' @param configuration EPANET \code{configuration}, representing an EPANET
+#'   input \code{file}, as returned by \code{\link{readEpanetInputFile}}
 #' @return named vector of numeric representing output file size in bytes, kB
 #'   (rounded) and MB (rounded), respectively
 #' @export
@@ -38,8 +39,10 @@ outputFileSize <- function(configuration)
 #' Number of Simulation Periods
 #' 
 #' number of simulation periods, calculated from duration and hydraulic time
-#'   step both of which must be given in the [TIMES] section of the EPANET
+#'   step both of which must be given in the \[TIMES\] section of the EPANET
 #'   configuration
+#' @param configuration EPANET configuration, as retrieved by \code{readEpanetInputFile} 
+#' @export
 #' 
 getNumberOfPeriods <- function(configuration)
 {

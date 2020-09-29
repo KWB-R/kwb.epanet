@@ -13,12 +13,16 @@ writeDrawdownCurves(
 )
 }
 \arguments{
+\item{epanetConfig}{EPANET configuration, as retrieved by \code{readEpanetInputFile}}
+
 \item{DD}{data.frame(ID, X_Value, Y_Value)}
 
-\item{curveNamePrefix}{prefix to be used in the curve name}
+\item{curveNamePrefix}{prefix to be used in the curve name (default: "dd")}
 
 \item{deleteOldCurves}{if TRUE all curves in epantetConfig$CURVES will be
-deleted before adding new ones}
+deleted before adding new ones (default: FALSE)}
+
+\item{dbg}{show debug messages? (default: TRUE)}
 }
 \value{
 Modified EPANET configuration

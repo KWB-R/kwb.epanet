@@ -18,6 +18,33 @@ setTimeParameter(
   statistic = ""
 )
 }
+\arguments{
+\item{configuration}{EPANET \code{configuration}, representing an EPANET
+input \code{file}, as returned by \code{\link{readEpanetInputFile}}}
+
+\item{duration}{(default: "")}
+
+\item{hydraulic.timestep}{(default: "")}
+
+\item{quality.timestep}{(default: "")}
+
+\item{rule.timestep}{(default: "")}
+
+\item{pattern.timestep}{(default: "")}
+
+\item{pattern.start}{(default: "")}
+
+\item{report.timestep}{(default: "")}
+
+\item{report.start}{(default: "")}
+
+\item{start.clocktime}{(default: "")}
+
+\item{statistic}{(default: "")}
+}
+\value{
+return configuration with modified [TIMES] parameterisation
+}
 \description{
 Set EPANET' time-related simulation parameters. See EPANET reference for the
 meaning of the parameters

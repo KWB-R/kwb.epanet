@@ -56,7 +56,9 @@ epanetInputFileLines <- function(inpdat, dbg = FALSE)
 # getEfficiencyCurve -----------------------------------------------------------
 
 #' Get Efficiency Curve
-#' 
+#' @keywords internal
+#' @noRd
+#' @noMd
 getEfficiencyCurve <- function(energy, curves, pumpname)
 {
   selected <- grepl("Pump", energy$X1, ignore.case = TRUE) & 
@@ -71,7 +73,9 @@ getEfficiencyCurve <- function(energy, curves, pumpname)
 # getHeadCurve -----------------------------------------------------------------
 
 #' Get Head Curve
-#' 
+#' @keywords internal
+#' @noRd
+#' @noMd
 getHeadCurve <- function(pump, curves, pumpname)
 {
   headCurveName <- pump[pump[, 1] == pumpname, 4]
@@ -401,6 +405,8 @@ curvesToText <- function(curves)
 #' @param curves data frame representing \code{curves}, with columns \emph{ID},
 #'   \emph{X_Value}, \emph{Y_Value}, as returned by
 #'   \code{\link{readEpanetInputFile}} in list element \emph{CURVES}
+#' @param newCurves new curves data frame representing \code{curves}, with columns \emph{ID},
+#'   \emph{X_Value}, \emph{Y_Value},
 #' @export
 replaceCurves <- function(curves, newCurves)
 {

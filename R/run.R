@@ -54,6 +54,8 @@ getEpanetInstallationPath <- function()
 # runEpanetGUI -----------------------------------------------------------------
 
 #' Run Epanet GUI
+#' @param inpfile path to EPANET input file
+#' @param epanet.dir EPANET directory (default: \code{getEpanetInstallationPath}) 
 #' @export
 runEpanetGUI <- function(inpfile = "", epanet.dir = getEpanetInstallationPath())
 {
@@ -224,6 +226,10 @@ checkReportFileForErrors <- function(reportFile)
 
 #' Run Epanet On Command Line
 #' 
+#' @param inpfile path to EPANET input file
+#' @param epanet.exe path to EPANET executable
+#' @param intern a logical, indicates whether to make the output of the command an R object.
+#' (default: FALSE)
 #' @param write.output if TRUE, EPANET will write a binary output file, else not
 #' @param dbg if TRUE, debug messages are shown. Default: FALSE  
 #' @export

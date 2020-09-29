@@ -6,8 +6,11 @@
 \usage{
 getNumberOfPeriods(configuration)
 }
+\arguments{
+\item{configuration}{EPANET configuration, as retrieved by \code{readEpanetInputFile}}
+}
 \description{
 number of simulation periods, calculated from duration and hydraulic time
-step both of which must be given in the \link{TIMES} section of the EPANET
+step both of which must be given in the [TIMES] section of the EPANET
 configuration
 }

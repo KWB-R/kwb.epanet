@@ -13,7 +13,16 @@ writePumpCurves(
 )
 }
 \arguments{
+\item{epanetConfig}{EPANET configuration, as retrieved by \code{readEpanetInputFile}}
+
 \item{TDH}{data.frame(ID, X_Value, Y_Value)}
+
+\item{curveNamePrefix}{(default: "TDH")}
+
+\item{deleteOldCurves}{if TRUE all curves in epantetConfig$CURVES will be
+deleted before adding new ones (default: FALSE)}
+
+\item{dbg}{show debug messages? (default: TRUE)}
 }
 \value{
 Modified EPANET configuration

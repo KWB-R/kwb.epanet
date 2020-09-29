@@ -13,6 +13,21 @@ plotOptimisationResults(
   ...
 )
 }
+\arguments{
+\item{totalEnergy}{list element \emph{energyTotal} as retrieved by \code{runOptimisationStrategy}}
+
+\item{name}{name of optimisation scenario (default: "")}
+
+\item{pumpsToReplace}{optional vector with pump_ids to be replaced (default: "")}
+
+\item{userConstraints}{list of userConstraints with elements \emph{namesOfWellsWithQualityProblems},
+\emph{waterDemand}}
+
+\item{currentOperation}{list of currentOperation with elements \emph{SpecificEnergy},
+(specific energy demand: kwh/m3) and \emph{Label} ("Specific energy demand of current operation")}
+
+\item{...}{additional arguments passed to \link[plot3D]{scatter2D}}
+}
 \description{
 Plot Optimisation Results
 }

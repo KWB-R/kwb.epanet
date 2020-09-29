@@ -6,6 +6,11 @@
 \usage{
 getNamesOfReservoirs(inpdat, pattern = ".*")
 }
+\arguments{
+\item{inpdat}{imported EPANET file (as retrieved by \code{readEpanetInputFile})}
+
+\item{pattern}{optional filter pattern (default: ".*")}
+}
 \description{
 Get Names Of Reservoirs
 }

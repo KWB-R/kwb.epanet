@@ -6,6 +6,11 @@
 \usage{
 runEpanetGUI(inpfile = "", epanet.dir = getEpanetInstallationPath())
 }
+\arguments{
+\item{inpfile}{path to EPANET input file}
+
+\item{epanet.dir}{EPANET directory (default: \code{getEpanetInstallationPath})}
+}
 \description{
 Run Epanet GUI
 }

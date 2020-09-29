@@ -6,6 +6,10 @@
 \usage{
 outputFileSize(configuration)
 }
+\arguments{
+\item{configuration}{EPANET \code{configuration}, representing an EPANET
+input \code{file}, as returned by \code{\link{readEpanetInputFile}}}
+}
 \value{
 named vector of numeric representing output file size in bytes, kB
 (rounded) and MB (rounded), respectively

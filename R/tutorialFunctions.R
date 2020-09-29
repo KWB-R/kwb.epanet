@@ -1,7 +1,12 @@
 # calculateSpecificEnergyDemand ------------------------------------------------
 
 #' Calculate Specific Energy Demand
-#' 
+#' @param waterDemand minimum constraint for water demand
+#' @param totalEnergy list element "energyTotal", as retrieved by 
+#' \code{runOptimisationStrategy} 
+#' @param COLNAMES list with elements \emph{Q}, \emph{E}, \emph{Eff}, corresponding to 
+#'   discharge, energy demand and efficiency, respectively. Default: 
+#'   list(Q = "Q.m3.per.hour.sum", E = "Kw.hr.per.m3.avg", Eff = "Average.Efficiency.avg")
 #' @return list with elements \emph{Q}, \emph{E}, \emph{Eff}, holding the column
 #'   names of \emph{totalEnergy}, corresponding to discharge, energy demand and
 #'   efficiency, respectively. Default: list(Q = "Q.m3.per.hour.sum", E =
@@ -112,6 +117,15 @@ calculateSpecificEnergyDemand <-  function(
 
 #' Plot Optimisation Results
 #' 
+#' @param totalEnergy list element \emph{energyTotal} as retrieved by \code{runOptimisationStrategy}   
+#' @param name name of optimisation scenario (default: "")
+#' @param pumpsToReplace optional vector with pump_ids to be replaced (default: "")
+#' @param userConstraints list of userConstraints with elements \emph{namesOfWellsWithQualityProblems}, 
+#' \emph{waterDemand}
+#' @param currentOperation list of currentOperation with elements \emph{SpecificEnergy}, 
+#' (specific energy demand: kwh/m3) and \emph{Label} ("Specific energy demand of current operation") 
+#' @param ... additional arguments passed to \link[plot3D]{scatter2D}
+#' @export
 plotOptimisationResults <- function(
   totalEnergy, 
   name="",
@@ -216,9 +230,18 @@ plotOptimisationResults <- function(
 
 #' Run Optimisation Strategy
 #' 
+#' @param configuration EPANET \code{configuration}, representing an EPANET
+#'   input \code{file}, as returned by \code{\link{readEpanetInputFile}}
+#' @param newCurvesData list with elements \emph{Pump} (data frame with columns 
+#' "ID", "X_VALUE" and "Y_VALUE") of pump curves, \emph{GlobalPumpEfficiency} (data frame with columns 
+#' "ID", "X_VALUE" and "Y_VALUE") and sublist \emph{PumpNamePrefix} (with elements 
+#' \emph{PumpCurves} = "TDH" and  \emph{GlobalPumpEfficiency} = "Eff" )
+#' @param optimisationStrategy list with elements \emph{name} (name of optimisation strategy), 
+#'   \emph{shortName} (short name of optimisation strategy) and \emph{pumpsToReplace} (vector with 
+#'   pump-ids to be replaced, if none: "") 
 #' @param operationSchemes possible wellfield operation schemes. Default:
 #'   wellFieldOperationSchemes(getNamesOfPumps(\code{configuration}))
-#' 
+#' @param showLivePlot (default: FALSE)
 #' @return list with elements \emph{energyTotal} and \emph{energyPerPump}
 #' @export
 runOptimisationStrategy <- function(
@@ -471,6 +494,12 @@ wellFieldOperationSchemes <- function(
 
 #' Set Well Field Operation
 #' 
+#' @param config EPANET \code{configuration}, representing an EPANET
+#'   input \code{file}, as returned by \code{\link{readEpanetInputFile}}
+#' @param operationScheme one possible wellfield operation scheme 
+#' (e.g. wellFieldOperationSchemes(getNamesOfPumps(\code{configuration})))
+#' @return config with modified well field operation rules 
+#' @export 
 setWellFieldOperation <- function(config, operationScheme)
 {
   columnNames <- colnames(operationScheme)
@@ -506,7 +535,9 @@ setWellFieldOperation <- function(config, operationScheme)
 #' Fitness Adapted Model Configuration
 #' 
 #' Called by calibrateModel
-#' 
+#' @keywords internal
+#' @noRd
+#' @noMd
 fitnessAdaptedModelConfiguration <- function(
   parameterValue, 
   parameterName, 
@@ -782,6 +813,7 @@ plotCalibration <- function(newRes)
 #' @param optimisationStrategies average daily water demand in m3/h to be satisfied
 #' @param averageWaterDemand current specific energy demand
 #' @param currentEnergyDemand should only the best solutions be written to data.frame? Default: FALSE
+#' @param onlyBestSolutions return only best solutions? (default: FALSE)
 #' @export
 createOptimisationResultsTable <- function(
   optimisationStrategies, 

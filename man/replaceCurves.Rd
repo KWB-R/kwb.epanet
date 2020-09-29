@@ -10,6 +10,9 @@ replaceCurves(curves, newCurves)
 \item{curves}{data frame representing \code{curves}, with columns \emph{ID},
 \emph{X_Value}, \emph{Y_Value}, as returned by
 \code{\link{readEpanetInputFile}} in list element \emph{CURVES}}
+
+\item{newCurves}{new curves data frame representing \code{curves}, with columns \emph{ID},
+\emph{X_Value}, \emph{Y_Value},}
 }
 \description{
 Replace \code{curves} in CURVES data
