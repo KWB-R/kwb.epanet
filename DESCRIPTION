@@ -33,7 +33,8 @@ Imports:
     lattice,
     plot3D
 Suggests: 
-    covr
-Remotes:  
+    covr,
+    testthat
+Remotes: 
     github::kwb-r/kwb.plot,
     github::kwb-r/kwb.utils
