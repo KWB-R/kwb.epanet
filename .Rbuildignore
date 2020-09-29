@@ -10,3 +10,7 @@
 ^codecov\.yml$
 ^index\.md$
 ^README\.md$
+^\.github/workflows$
+^\.ccache$
+^\.github$
+^tic\.R$
