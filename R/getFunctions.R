@@ -2,6 +2,7 @@
 
 #' Get Pipe Coordinates
 #' 
+#' @export
 getPipeCoordinates <- function(inpdat)
 {
   x <- inpdat$PIPES[, c("ID", "Node1", "Node2")]
@@ -25,6 +26,7 @@ getPipeCoordinates <- function(inpdat)
 
 #' Get Pump Info
 #' 
+#' @export
 getPumpInfo <- function(inpdat)
 {
   pumpinfo <- merge(inpdat$PUMPS, inpdat$COORDINATES, by.x = "Node1", by.y = "Node")
@@ -41,6 +43,7 @@ getPumpInfo <- function(inpdat)
 
 #' Get Names Of Objects
 #' 
+#' @export
 getNamesOfObjects <- function(inpdat, section, pattern = ".*")
 {
   grep(pattern, unique(inpdat[[section]]$ID), value=TRUE)
@@ -50,6 +53,7 @@ getNamesOfObjects <- function(inpdat, section, pattern = ".*")
 
 #' Get Names Of Curves
 #' 
+#' @export
 getNamesOfCurves <- function(inpdat, pattern = ".*")
 {
   getNamesOfObjects(inpdat, "CURVES", pattern)  
@@ -59,6 +63,7 @@ getNamesOfCurves <- function(inpdat, pattern = ".*")
 
 #' Get Names Of Junctions
 #' 
+#' @export
 getNamesOfJunctions <- function(inpdat, pattern = ".*")
 {
   getNamesOfObjects(inpdat, "JUNCTIONS", pattern)  
@@ -68,6 +73,7 @@ getNamesOfJunctions <- function(inpdat, pattern = ".*")
 
 #' Get Names Of Reservoirs
 #' 
+#' @export
 getNamesOfReservoirs <- function(inpdat, pattern = ".*")
 {
   getNamesOfObjects(inpdat, "RESERVOIRS", pattern)  
@@ -76,7 +82,8 @@ getNamesOfReservoirs <- function(inpdat, pattern = ".*")
 # getNamesOfTanks --------------------------------------------------------------
 
 #' Get Names Of Tanks
-#' 
+#'
+#' @export 
 getNamesOfTanks <- function(inpdat, pattern = ".*")
 {
   getNamesOfObjects(inpdat, "TANKS", pattern)  
@@ -86,6 +93,7 @@ getNamesOfTanks <- function(inpdat, pattern = ".*")
 
 #' Get Names Of Pipes
 #' 
+#' @export
 getNamesOfPipes <- function(inpdat, pattern = ".*")
 {
   getNamesOfObjects(inpdat, "PIPES", pattern)  
@@ -95,6 +103,8 @@ getNamesOfPipes <- function(inpdat, pattern = ".*")
 
 #' Get Names Of Pumps
 #' 
+#' @export
+
 getNamesOfPumps <- function(inpdat, pattern = ".*")
 {
   getNamesOfObjects(inpdat, "PUMPS", pattern)  
@@ -104,6 +114,7 @@ getNamesOfPumps <- function(inpdat, pattern = ".*")
 
 #' Get Names Of Valves
 #' 
+#' @export
 getNamesOfValves <- function(inpdat, pattern = ".*")
 {
   getNamesOfObjects(inpdat, "VALVES", pattern)  
