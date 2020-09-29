@@ -1,3 +1,4 @@
+  [![tic](https://github.com/kwb-r/kwb.epanet/workflows/tic/badge.svg?branch=master)](https://github.com/kwb-r/kwb.epanet/actions)
 [![Appveyor build Status](https://ci.appveyor.com/api/projects/status/github/KWB-R/kwb.epanet?branch=master&svg=true)](https://ci.appveyor.com/project/KWB-R/kwb-epanet/branch/master)
 [![Travis build Status](https://travis-ci.org/KWB-R/kwb.epanet.svg?branch=master)](https://travis-ci.org/KWB-R/kwb.epanet)
 [![codecov](https://codecov.io/github/KWB-R/kwb.epanet/branch/master/graphs/badge.svg)](https://codecov.io/github/KWB-R/kwb.epanet)
