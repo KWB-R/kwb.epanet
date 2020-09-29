@@ -6,7 +6,7 @@
 #'   names of \emph{totalEnergy}, corresponding to discharge, energy demand and
 #'   efficiency, respectively. Default: list(Q = "Q.m3.per.hour.sum", E =
 #'   "Kw.hr.per.m3.avg", Eff = "Average.Efficiency.avg")
-#' 
+#' @export
 calculateSpecificEnergyDemand <-  function(
   waterDemand,
   totalEnergy,
@@ -220,7 +220,7 @@ plotOptimisationResults <- function(
 #'   wellFieldOperationSchemes(getNamesOfPumps(\code{configuration}))
 #' 
 #' @return list with elements \emph{energyTotal} and \emph{energyPerPump}
-#' 
+#' @export
 runOptimisationStrategy <- function(
   configuration, 
   newCurvesData,
@@ -422,7 +422,7 @@ runOptimisationStrategy <- function(
 #' @param niceLabels Optionally nice labeling. List with elements \emph{searchPattern} and 
 #'   \emph{searchReplacement}. Default: list(searchPattern = "pmp",
 #'   searchReplacement = "p")
-#' 
+#' @export
 wellFieldOperationSchemes <- function(
   pumpNames, 
   niceLabels = list(searchPattern = "pmp", searchReplacement = "p")
@@ -661,7 +661,7 @@ fitnessAdaptedModelConfiguration <- function(
 #'   showLivePlot=TRUE. Default: TRUE
 #' @param \dots additional parameters to be passed to
 #'   fitnessAdaptedModelConfiguration()
-#' 
+#' @export
 calibrateModel <- function(
   configuration,
   pipeIDs = NULL,
@@ -734,7 +734,7 @@ calibrateModel <- function(
 #' @param newRes expects data.frame object "newRes" as input parameter (is automatically
 #'   produced by calibrateModel(). Required columns: \emph{Qerror},
 #'   \emph{calibrationRunNumber}, \emph{pch}, \emph{colors}, \emph{pumpNames}
-#' 
+#' @export
 plotCalibration <- function(newRes)
 {
   PCH <- kwb.plot:::getPlotCharacterConstants()
@@ -782,7 +782,7 @@ plotCalibration <- function(newRes)
 #' @param optimisationStrategies average daily water demand in m3/h to be satisfied
 #' @param averageWaterDemand current specific energy demand
 #' @param currentEnergyDemand should only the best solutions be written to data.frame? Default: FALSE
-#' 
+#' @export
 createOptimisationResultsTable <- function(
   optimisationStrategies, 
   averageWaterDemand, 

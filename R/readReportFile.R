@@ -10,7 +10,7 @@
 #' 
 #' @return list with elements \emph{nodeData} containing a data frame with node
 #'   results and \emph{linkData} containing a data frame with link results
-#' 
+#' @export
 readResultsFromReportFile <- function(reportFile, warn = TRUE)
 {  
   reportLines <- readLines(reportFile)  
