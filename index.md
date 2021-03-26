@@ -1,6 +1,5 @@
-  [![tic](https://github.com/kwb-r/kwb.epanet/workflows/tic/badge.svg?branch=master)](https://github.com/kwb-r/kwb.epanet/actions)
-[![Appveyor build Status](https://ci.appveyor.com/api/projects/status/github/KWB-R/kwb.epanet?branch=master&svg=true)](https://ci.appveyor.com/project/KWB-R/kwb-epanet/branch/master)
-[![Travis build Status](https://travis-ci.org/KWB-R/kwb.epanet.svg?branch=master)](https://travis-ci.org/KWB-R/kwb.epanet)
+[![R-CMD-check](https://github.com/KWB-R/kwb.epanet/workflows/R-CMD-check/badge.svg)](https://github.com/KWB-R/kwb.epanet/actions?query=workflow%3AR-CMD-check)
+[![pkgdown](https://github.com/KWB-R/kwb.epanet/workflows/pkgdown/badge.svg)](https://github.com/KWB-R/kwb.epanet/actions?query=workflow%3Apkgdown)
 [![codecov](https://codecov.io/github/KWB-R/kwb.epanet/branch/master/graphs/badge.svg)](https://codecov.io/github/KWB-R/kwb.epanet)
 [![Project Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/kwb.epanet)]()
