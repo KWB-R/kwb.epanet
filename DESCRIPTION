@@ -9,7 +9,7 @@ Authors@R:
              comment = c(ORCID = "0000-0001-9134-2871")),
       person(given = "Michael",
              family = "Rustler",
-             role = c("ctb"),
+             role = "ctb",
              email = "michael.rustler@kompetenz-wasser.de",
              comment = c(ORCID = "0000-0003-0647-7726")),
       person(given = "OPTIWELLS-2",
@@ -22,10 +22,6 @@ Description: Functions enabling the reading and writing of
 License: MIT + file LICENSE
 URL: https://github.com/KWB-R/kwb.epanet
 BugReports: https://github.com/KWB-R/kwb.epanet/issues
-Encoding: UTF-8
-LazyData: true
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
 Imports:
     gtools,
     kwb.plot,
@@ -38,3 +34,7 @@ Suggests:
 Remotes: 
     github::kwb-r/kwb.plot,
     github::kwb-r/kwb.utils
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
