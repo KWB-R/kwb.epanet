@@ -3,7 +3,7 @@
 Prepare public release with the help of R package [kwb.pkgbuild](https://kwb-r.github.io/kwb.pkgbuild) 
 
 * added RScript `R/.create_package_from_scratch` to (eg. re-build DESCRIPTION
-added CI: Travis and Appeveyor, documentation website)
+added CI: Github actions, documentation website)
 
 * build documentation with roxygen2 
 
