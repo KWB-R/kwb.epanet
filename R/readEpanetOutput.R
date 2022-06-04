@@ -3,10 +3,11 @@
 #' Size of Binary Output File
 #' 
 #' Size of binary output file in Bytes, kB (rounded), MB (rounded)
-#'
+#' @param configuration EPANET \code{configuration}, representing an EPANET
+#'   input \code{file}, as returned by \code{\link{readEpanetInputFile}}
 #' @return named vector of numeric representing output file size in bytes, kB
 #'   (rounded) and MB (rounded), respectively
-#' 
+#' @export
 outputFileSize <- function(configuration)
 {
   Nnodes <- nrow(configuration$JUNCTIONS)  
@@ -38,8 +39,10 @@ outputFileSize <- function(configuration)
 #' Number of Simulation Periods
 #' 
 #' number of simulation periods, calculated from duration and hydraulic time
-#'   step both of which must be given in the [TIMES] section of the EPANET
+#'   step both of which must be given in the \[TIMES\] section of the EPANET
 #'   configuration
+#' @param configuration EPANET configuration, as retrieved by \code{readEpanetInputFile} 
+#' @export
 #' 
 getNumberOfPeriods <- function(configuration)
 {
@@ -64,7 +67,7 @@ getNumberOfPeriods <- function(configuration)
 #' Report Energy Use
 #' 
 #' @param outdat output data read from EPANET out-file
-#' 
+#' @export
 reportEnergyUse <- function(outdat) 
 {
   outdat$energyUse
@@ -94,7 +97,7 @@ reportEnergyUse <- function(outdat)
 #'   "Q" = flow, "v" = velocity, "hl" = headloss, "wq" = avg. water quality, 
 #'   "sta" = status, "set" = setting, "rr" = reaction rate, 
 #'   "ff" = friction factor
-#' 
+#' @export
 getLinkResults <- function(
   outdat, links, vars = c("q", "v", "hl", "wq", "sta", "set", "rr", "ff")
 )
@@ -113,7 +116,7 @@ getLinkResults <- function(
 #'   \link{getNamesOfTanks}} in order to get the names of available \code{nodes}
 #' @param vars acronyms of variables to be included in the returned data frame. 
 #'   "d" = demand, "h" = head, "p" = pressure, "wq" = water quality
-#' 
+#' @export
 getNodeResults <- function(outdat, nodes, vars = c("d", "h", "p", "wq"))
 {
   .getLinkOrNodeResults(outdat, FALSE, nodes, vars)
@@ -189,7 +192,7 @@ getNodeResults <- function(outdat, nodes, vars = c("d", "h", "p", "wq"))
 #' \emph{En} (energy)
 #' 
 #' @seealso \code{\link{plotPumpPerformance}}  
-#' 
+#' @export
 getPumpPerformance <- function(inpdata, outdata, pumpnames)
 {
   pumpPerformance <- data.frame()
@@ -245,7 +248,7 @@ getPumpPerformance <- function(inpdata, outdata, pumpnames)
 #'   to be used as for y axis plotting, e.g. c("Eff", "specEn", "En")
 #' @param pumpPerformanceTimeSeries pump performance time series as retrieved by getPumpPerformance()
 #' @seealso \code{\link{getPumpPerformance}}
-#' 
+#' @export
 plotPumpPerformance <- function(xCols, yCols, pumpPerformanceTimeSeries)
 {
   # \xb3 = "to the power of three", keep it like this (ASCII required)!
@@ -291,7 +294,7 @@ plotPumpPerformance <- function(xCols, yCols, pumpPerformanceTimeSeries)
 #' 
 #' @param outdat data structure read from EPANET output file, as returned by 
 #'   \code{\link{readEpanetOutputFile}}.    
-#' 
+#' @export
 getNodeTimeseriesFromOutputData <- function(outdat)
 {
   dynamicResults <- outdat$dynamicResults
@@ -393,7 +396,7 @@ showProperties <- function(outdata)
 #'   the EPANET Toolkit.
 #' 
 #' @seealso \code{\link{readEpanetInputFile}}
-#' 
+#' @export
 readEpanetOutputFile <- function(
   outfile,
   read.prolog = TRUE,

@@ -2,6 +2,7 @@
 
 #' Write Curves
 #' 
+#' @param epanetConfig EPANET configuration, as retrieved by \code{readEpanetInputFile}
 #' @param pumpCurves list(data = data.frame(ID, X_Value, Y_Value), label = "")
 #' @param efficiencyCurves list(data = data.frame(ID, X_Value, Y_Value), label =
 #'   "")
@@ -9,7 +10,8 @@
 #'   "")
 #' @param deleteOldCurves should all curves in 'epanetConfig' be deleted before
 #'   writing?
-#' 
+#' @param dbg show debug messages? (default: TRUE)
+#' @export
 writeCurves <- function(
   epanetConfig,
   pumpCurves = NULL, 
@@ -45,11 +47,14 @@ writeCurves <- function(
 # writePumpCurves --------------------------------------------------------------
 
 #' Write Pump Curves
-#' 
+#' @param epanetConfig EPANET configuration, as retrieved by \code{readEpanetInputFile}
 #' @param TDH data.frame(ID, X_Value, Y_Value)
-#' 
+#' @param curveNamePrefix (default: "TDH")
+#' @param deleteOldCurves if TRUE all curves in epantetConfig$CURVES will be
+#'   deleted before adding new ones (default: FALSE)
+#' @param dbg show debug messages? (default: TRUE)
 #' @return Modified EPANET configuration
-#' 
+#' @export
 writePumpCurves <- function(
   epanetConfig,
   TDH, 
@@ -74,14 +79,14 @@ writePumpCurves <- function(
 # writeDrawdownCurves ----------------------------------------------------------
 
 #' Write Drawdown Curves
-#' 
+#' @param epanetConfig EPANET configuration, as retrieved by \code{readEpanetInputFile}
 #' @param DD data.frame(ID, X_Value, Y_Value)
-#' @param curveNamePrefix prefix to be used in the curve name
+#' @param curveNamePrefix prefix to be used in the curve name (default: "dd")
 #' @param deleteOldCurves if TRUE all curves in epantetConfig$CURVES will be
-#'   deleted before adding new ones
-#' 
+#'   deleted before adding new ones (default: FALSE)
+#' @param dbg show debug messages? (default: TRUE)
 #' @return Modified EPANET configuration  
-#' 
+#' @export
 writeDrawdownCurves <- function(
   epanetConfig,
   DD, 
@@ -107,11 +112,14 @@ writeDrawdownCurves <- function(
 # writeEfficiencyCurves --------------------------------------------------------
 
 #' Write Efficiency Curves
-#' 
+#' @param epanetConfig EPANET configuration, as retrieved by \code{readEpanetInputFile}
 #' @param Eff data.frame(ID, X_Value, Y_Value)
-#' 
+#' @param curveNamePrefix prefix to be used in the curve name (default: "Eff")
+#' @param deleteOldCurves if TRUE all curves in epantetConfig$CURVES will be
+#'   deleted before adding new ones (default: FALSE)
+#' @param dbg show debug messages? (default: TRUE)
 #' @return Modified EPANET configuration  
-#' 
+#' @export
 writeEfficiencyCurves <- function(
   epanetConfig,
   Eff, 

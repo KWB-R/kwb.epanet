@@ -5,6 +5,20 @@
 #' Set EPANET' time-related simulation parameters. See EPANET reference for the
 #'   meaning of the parameters
 #' 
+#' @param configuration EPANET \code{configuration}, representing an EPANET
+#'   input \code{file}, as returned by \code{\link{readEpanetInputFile}}
+#' @param duration (default: "")
+#' @param hydraulic.timestep (default: "")
+#' @param quality.timestep (default: "")
+#' @param rule.timestep (default: "")
+#' @param pattern.timestep (default: "")
+#' @param pattern.start (default: "")
+#' @param report.timestep (default: "")
+#' @param report.start (default: "")
+#' @param start.clocktime (default: "")
+#' @param statistic (default: "")
+#' @return return configuration with modified \[TIMES\] parameterisation
+#' @export
 setTimeParameter <- function
 (
   configuration, 

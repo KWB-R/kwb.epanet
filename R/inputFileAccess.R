@@ -5,7 +5,7 @@
 #' @param inpdat input data to be saved in EPANET's input file format
 #' @param inpfile full path to input file to be created
 #' @param dbg if TRUE, debug messages are shown. Default: FALSE  
-#' 
+#' @export
 writeEpanetInputFile <- function(inpdat, inpfile, dbg = FALSE)
 {
   kwb.utils::catIf(dbg, sprintf("Writing EPANET input file to \"%s\"...\n", inpfile))
@@ -19,7 +19,7 @@ writeEpanetInputFile <- function(inpdat, inpfile, dbg = FALSE)
 #' 
 #' @param inpdat input data to be saved in EPANET's input file format
 #' @param dbg if TRUE, debug messages are shown. Default: FALSE
-#' 
+#' @export
 epanetInputFileLines <- function(inpdat, dbg = FALSE)
 {
   txtlines <- character()
@@ -56,7 +56,9 @@ epanetInputFileLines <- function(inpdat, dbg = FALSE)
 # getEfficiencyCurve -----------------------------------------------------------
 
 #' Get Efficiency Curve
-#' 
+#' @keywords internal
+#' @noRd
+#' @noMd
 getEfficiencyCurve <- function(energy, curves, pumpname)
 {
   grepl_ignore <- function(p, x) grepl(p, x, ignore.case = TRUE)
@@ -74,7 +76,9 @@ getEfficiencyCurve <- function(energy, curves, pumpname)
 # getHeadCurve -----------------------------------------------------------------
 
 #' Get Head Curve
-#' 
+#' @keywords internal
+#' @noRd
+#' @noMd
 getHeadCurve <- function(pump, curves, pumpname)
 {
   headCurveName <- pump[pump[, 1L] == pumpname, 4L]
@@ -95,7 +99,7 @@ getHeadCurve <- function(pump, curves, pumpname)
 #' @param curveNames names of \code{curves} to be plotted. Default: all names in
 #'   column \emph{ID} of \emph{curves}
 #' @param \dots additional arguments passed to xyplot
-#' 
+#' @export
 plotCurves <- function(curves, curveNames = unique(curves$ID), ...)
 {
   curves$X_Value <- as.numeric(curves$X_Value)
@@ -125,7 +129,7 @@ plotCurves <- function(curves, curveNames = unique(curves$ID), ...)
 #'   data frame containing the content of the corresponding section. 
 #' 
 #' @seealso \code{\link{availableSections}, \link{readEpanetOutputFile}}  
-#' 
+#' @export
 readEpanetInputFile <- function(inpfile, dbg = FALSE)
 {
   textlines <- readLines(inpfile)
@@ -149,7 +153,7 @@ readEpanetInputFile <- function(inpfile, dbg = FALSE)
 #'   the EPANET input file (without brackets)
 #' 
 #' @seealso \code{\link{readEpanetInputFile}}
-#' 
+#' @export
 availableSections <- function(inpfile)
 {
   names(.getSectionStarts(readLines(inpfile)))
@@ -179,7 +183,7 @@ availableSections <- function(inpfile)
 #' 
 #' @return data frame representing the content of the section in the input file. 
 #'   If possible, column names are read from the section's header line
-#' 
+#' @export 
 getSection <- function(inpfile, sectionName) 
 {  
   .getSectionFromTextLines(readLines(inpfile), sectionName)
@@ -298,7 +302,7 @@ getSection <- function(inpfile, sectionName)
 #' Example Input Files
 #' 
 #' @return full path(s) to EPANET example input file(s)
-#' 
+#' @export
 exampleInputFiles <- function() 
 {
   dir(extdata_file(), "\\.inp$", full.names = TRUE)
@@ -313,11 +317,9 @@ extdata_file <- kwb.utils::createFunctionExtdataFile("kwb.epanet")
 #' @param inpfile full path to EPANET input file
 #' @param newCurves modified CURVES section. Data frame as returned by 
 #'   \code{\link{readEpanetInputFile}} in list element \emph{curves}
-#' @param inpfile.new full path to modified EPANET input file. 
-#'   Default: \emph{<inpfile-without-extension>_new.inp}
-#' 
+#' @param inpfile.new full path to modified EPANET input file. (default: \emph{\<inpfile-without-extension_new\>.inp})
 #' @return full path to created input file
-#' 
+#' @export
 writeInputFileWithNewCurveSection <- function(
   inpfile, 
   newCurves, 
@@ -341,7 +343,7 @@ writeInputFileWithNewCurveSection <- function(
 #'   \code{\link{readEpanetInputFile}} in list element \emph{curves}
 #' 
 #' @return vector of character(s) representing the rows of the input file
-#' 
+#' @export
 replaceCurveSectionInInputFile <- function(inpfile, newCurves)
 {
   txtlines <- readLines(inpfile)
@@ -381,7 +383,7 @@ replaceCurveSectionInInputFile <- function(inpfile, newCurves)
 #' @param curves data frame representing \code{curves}, with columns \emph{ID},
 #'   \emph{X_Value}, \emph{Y_Value}, as returned by
 #'   \code{\link{readEpanetInputFile}} in list element \emph{CURVES}
-#' 
+#' @export
 curvesToText <- function(curves)
 {
   curves$ID <- sprintf(" %16-s", curves$ID)
@@ -406,7 +408,9 @@ curvesToText <- function(curves)
 #' @param curves data frame representing \code{curves}, with columns \emph{ID},
 #'   \emph{X_Value}, \emph{Y_Value}, as returned by
 #'   \code{\link{readEpanetInputFile}} in list element \emph{CURVES}
-#' 
+#' @param newCurves new curves data frame representing \code{curves}, with columns \emph{ID},
+#'   \emph{X_Value}, \emph{Y_Value},
+#' @export
 replaceCurves <- function(curves, newCurves)
 {
   for (curveName in .trim(unique(newCurves$ID))) {
@@ -433,7 +437,7 @@ replaceCurves <- function(curves, newCurves)
 #' @return data frame in which the lines corresponding to the curve named
 #'   \emph{curveName} are replaced with \code{x} and \code{y} values given in
 #'   \emph{x} and \emph{y}, respectively
-#' 
+#' @export
 replaceOneCurve <- function(curves, curveName, x, y)
 {
   selection <- which(.trim(curves$ID) == curveName)
