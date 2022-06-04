@@ -59,13 +59,16 @@ epanetInputFileLines <- function(inpdat, dbg = FALSE)
 #' 
 getEfficiencyCurve <- function(energy, curves, pumpname)
 {
-  selected <- grepl("Pump", energy$X1, ignore.case = TRUE) & 
-    grepl("Efficiency", energy$X3, ignore.case = TRUE) & 
+  grepl_ignore <- function(p, x) grepl(p, x, ignore.case = TRUE)
+  
+  selected <- 
+    grepl_ignore("Pump", energy$X1) & 
+    grepl_ignore("Efficiency", energy$X3) & 
     energy$X2 == pumpname
   
-  effCurveName <- energy[selected, 4]
+  effCurveName <- energy[selected, 4L]
   
-  curves[curves$ID == effCurveName, -1]
+  curves[curves$ID == effCurveName, -1L]
 }
 
 # getHeadCurve -----------------------------------------------------------------
@@ -74,13 +77,13 @@ getEfficiencyCurve <- function(energy, curves, pumpname)
 #' 
 getHeadCurve <- function(pump, curves, pumpname)
 {
-  headCurveName <- pump[pump[, 1] == pumpname, 4]
+  headCurveName <- pump[pump[, 1L] == pumpname, 4L]
   
   pattern <- "^HEAD\\s+"
   headCurveName <- headCurveName[grep(pattern, headCurveName, ignore.case = TRUE)]
   headCurveName <- sub(pattern, "", headCurveName, ignore.case = TRUE)
   
-  curves[curves[, 1] == headCurveName, -1]
+  curves[curves[, 1L] == headCurveName, -1L]
 }
 
 # plotCurves -------------------------------------------------------------------
@@ -128,14 +131,10 @@ readEpanetInputFile <- function(inpfile, dbg = FALSE)
   textlines <- readLines(inpfile)
   skip <- c("REACTIONS", "END")  
   
-  result <- list()
-
-  for (section in setdiff(availableSections(inpfile), skip)) {
+  lapply(setdiff(availableSections(inpfile), skip), function(section) {
     kwb.utils::catIf(dbg, "Section:", section, "\n")
-    result[[section]] <- .getSectionFromTextLines(textlines, section)      
-  }
-  
-  result
+    .getSectionFromTextLines(textlines, section)
+  })
 }
 
 # availableSections ------------------------------------------------------------
@@ -153,19 +152,19 @@ readEpanetInputFile <- function(inpfile, dbg = FALSE)
 #' 
 availableSections <- function(inpfile)
 {
-  txtlines <- readLines(inpfile)  
-  names(.getSectionStarts(txtlines))
+  names(.getSectionStarts(readLines(inpfile)))
 }
 
 # .getSectionStarts ------------------------------------------------------------
 .getSectionStarts <- function(txtlines)
 {
   pattern <- "\\[\\s*(\\S*)\\s*\\]"
+  
   sectionStarts <- grep(pattern, txtlines)
   sectionStartLines <- txtlines[sectionStarts]
   sections <- sub(pattern, "\\1", sectionStartLines)
-  names(sectionStarts) <- sections
-  sectionStarts
+  
+  stats::setNames(sectionStarts, sections)
 }
 
 # getSection -------------------------------------------------------------------
@@ -183,8 +182,7 @@ availableSections <- function(inpfile)
 #' 
 getSection <- function(inpfile, sectionName) 
 {  
-  txtlines <- readLines(inpfile)
-  .getSectionFromTextLines(txtlines, sectionName)
+  .getSectionFromTextLines(readLines(inpfile), sectionName)
 }
 
 # .getSectionFromTextLines -----------------------------------------------------
@@ -200,7 +198,7 @@ getSection <- function(inpfile, sectionName)
   headerRow <- grep(headerPattern, txtblock)
   splitPattern <- "\\s*\t\\s*"
   
-  if (length(headerRow) > 0) {
+  if (length(headerRow)) {
     
     header <- .trimSpaceAndOptionalSemicolon(txtblock[headerRow])
     captions <- .substSpecialCharacters(strsplit(header, split = splitPattern)[[1]])
@@ -215,7 +213,7 @@ getSection <- function(inpfile, sectionName)
   body <- .trimSpaceAndOptionalSemicolon(body)
   body <- body[body != ""]
   
-  if (length(body) > 0) {
+  if (length(body)) {
     
     fields <- strsplit(body, split = splitPattern)
     numberOfColumns <- max(c(length(captions), sapply(fields, length)))
@@ -237,7 +235,7 @@ getSection <- function(inpfile, sectionName)
   
   if (!is.null(captions)) {
     
-    names(result)[1:length(captions)] <- captions
+    names(result)[seq_along(captions)] <- captions
     
   } else {
     
@@ -252,20 +250,18 @@ getSection <- function(inpfile, sectionName)
 {
   if (index < length(sectionStarts)) {
     
-    lastRow <- sectionStarts[index + 1] - 1
+    sectionStarts[index + 1L] - 1L
     
   } else {
     
-    lastRow <- maxRow
+    maxRow
   }
-  
-  lastRow
 }
 
 # .defaultColumnNames ----------------------------------------------------------
 .defaultColumnNames <- function(numberOfColumns)
 {
-  paste("X", 1:numberOfColumns, sep = "")
+  paste("X", seq_len(numberOfColumns), sep = "")
 }
 
 # .substSpecialCharacters ------------------------------------------------------
@@ -281,7 +277,7 @@ getSection <- function(inpfile, sectionName)
   
   if (len < targetLength) {
     
-    c(x, rep(fillupWith, times = targetLength - length(x)))
+    c(x, rep(fillupWith, times = targetLength - len))
     
   } else {
     
@@ -293,7 +289,8 @@ getSection <- function(inpfile, sectionName)
 .trimSpaceAndOptionalSemicolon <- function(x)
 {
   x <- sub("^\\s*;?\\s*", "", x)
-  sub("\\s*;?\\s*$", "", x)
+  x <- sub("\\s*;?\\s*$", "", x)
+  x
 }
 
 # exampleInputFiles ------------------------------------------------------------
@@ -304,8 +301,10 @@ getSection <- function(inpfile, sectionName)
 #' 
 exampleInputFiles <- function() 
 {
-  dir(system.file("extdata", package = "kwb.epanet"), "\\.inp$", full.names = TRUE)
+  dir(extdata_file(), "\\.inp$", full.names = TRUE)
 }
+
+extdata_file <- kwb.utils::createFunctionExtdataFile("kwb.epanet")
 
 # writeInputFileWithNewCurveSection --------------------------------------------
 
@@ -325,10 +324,11 @@ writeInputFileWithNewCurveSection <- function(
   inpfile.new = sub("(\\.[^\\.]+)$", "_new\\1", inpfile)
 )
 {
-  cat(sprintf("Writing modified EPANET input file to %s... ", inpfile.new))
-  writeLines(replaceCurveSectionInInputFile(inpfile, newCurves), inpfile.new)
-  cat("ok.\n")
-  
+  kwb.utils::catAndRun(
+    sprintf("Writing modified EPANET input file to %s... ", inpfile.new),
+    writeLines(replaceCurveSectionInInputFile(inpfile, newCurves), inpfile.new)
+  )
+
   inpfile.new
 }
 
@@ -348,8 +348,8 @@ replaceCurveSectionInInputFile <- function(inpfile, newCurves)
   
   curveRows <- .getRowIndicesOfSection(txtlines, "CURVES")
   
-  before <- txtlines[1:min(curveRows)] 
-  after <- txtlines[(max(curveRows)+1):length(txtlines)]
+  before <- txtlines[seq_len(min(curveRows))] 
+  after <- txtlines[seq(max(curveRows) + 1L, length(txtlines))]
   
   c(before, curvesToText(newCurves), after)
 }
@@ -360,18 +360,18 @@ replaceCurveSectionInInputFile <- function(inpfile, newCurves)
   sectionStarts <- .getSectionStarts(txtlines)
   index <- which(names(sectionStarts) == sectionName)
   
-  if (length(index) < 1) {
+  if (length(index) < 1L) {
     stop("No such section: ", sectionName)
   }
   
-  if (length(index) > 1) {
+  if (length(index) > 1L) {
     stop("Multiple section: ", sectionName)
   }
   
-  firstRow <- sectionStarts[index] + 1
+  firstRow <- sectionStarts[index] + 1L
   lastRow <- .sectionEnd(index, sectionStarts, length(txtlines))
   
-  seq(firstRow, length.out = (lastRow - firstRow + 1))
+  seq(firstRow, length.out = (lastRow - firstRow + 1L))
 }
 
 # curvesToText -----------------------------------------------------------------
@@ -385,11 +385,14 @@ replaceCurveSectionInInputFile <- function(inpfile, newCurves)
 curvesToText <- function(curves)
 {
   curves$ID <- sprintf(" %16-s", curves$ID)
-  curves$X_Value <- sprintf("%12.12-f", as.numeric(curves$X_Value))
-  curves$Y_Value <- sprintf("%12.12-f", as.numeric(curves$Y_Value))
   
-  curves$X_Value <- sprintf("%12-s", .removeZeroesAtTheEnd(curves$X_Value))
-  curves$Y_Value <- sprintf("%12-s", .removeZeroesAtTheEnd(curves$Y_Value))
+  fmt <- "%12.12-f"
+  curves$X_Value <- sprintf(fmt, as.numeric(curves$X_Value))
+  curves$Y_Value <- sprintf(fmt, as.numeric(curves$Y_Value))
+  
+  fmt <- "%12-s"
+  curves$X_Value <- sprintf(fmt, .removeZeroesAtTheEnd(curves$X_Value))
+  curves$Y_Value <- sprintf(fmt, .removeZeroesAtTheEnd(curves$Y_Value))
   
   paste(curves$ID, curves$X_Value, curves$Y_Value, sep = "\t")  
 }
@@ -408,7 +411,9 @@ replaceCurves <- function(curves, newCurves)
 {
   for (curveName in .trim(unique(newCurves$ID))) {
     newCurve <- newCurves[.trim(newCurves$ID) == curveName, ]
-    curves <- replaceOneCurve(curves, curveName, newCurve$X_Value, newCurve$Y_Value)
+    curves <- replaceOneCurve(
+      curves, curveName, newCurve$X_Value, newCurve$Y_Value
+    )
   }
   
   curves
@@ -433,9 +438,9 @@ replaceOneCurve <- function(curves, curveName, x, y)
 {
   selection <- which(.trim(curves$ID) == curveName)
   
-  before <- seq(1, length.out = min(selection) - 1)
+  before <- seq(1L, length.out = min(selection) - 1L)
   last <- max(selection)
-  after <- seq(last + 1, length.out = nrow(curves) - last)
+  after <- seq(last + 1L, length.out = nrow(curves) - last)
   
   rbind(
     curves[before, ],

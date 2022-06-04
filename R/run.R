@@ -7,10 +7,16 @@
 setEpanetInstallationPath <- function(epanet.dir)  
 {
   if (! is.null(epanet.dir) && ! file.exists (epanet.dir)) {
-    stop("The folder ", kwb.utils::hsQuoteChr(epanet.dir), "does not exist.")
+    stop_missing_folder(epanet.dir)
   }
   
   options(kwb.db.epanet.dir = epanet.dir)    
+}
+
+# stop_missing_folder ----------------------------------------------------------
+stop_missing_folder <- function(x)
+{
+  stop("The folder ", kwb.utils::hsQuoteChr(x), "does not exist.")
 }
 
 # getEpanetInstallationPath ----------------------------------------------------
@@ -22,17 +28,19 @@ getEpanetInstallationPath <- function()
   epanet.dir <- getOption("kwb.db.epanet.dir")
   
   if (! is.null(epanet.dir) && ! file.exists (epanet.dir)) {
-    stop("The folder ", kwb.utils::hsQuoteChr(epanet.dir), "does not exist.")
+    stop_missing_folder(epanet.dir)
     options(kwb.db.epanet.dir = NULL)
   }
   
   if (is.null(epanet.dir)) {
     
-    defaultDirectories <- file.path(kwb.utils::defaultWindowsProgramFolders(), "EPANET2")
+    defaultDirectories <- file.path(
+      kwb.utils::defaultWindowsProgramFolders(), "EPANET2"
+    )
     
     existing <- which(file.exists(defaultDirectories))
     
-    if (length(existing) > 0) {
+    if (length(existing)) {
       
       epanet.dir <- defaultDirectories[existing[1]]
       
@@ -103,7 +111,7 @@ runEpanetConfiguration <- function(
   dbg = FALSE
 )
 {
-  inpfile <- file.path(tempdir(), paste(name, "inp", sep = "."))
+  inpfile <- file.path(tempdir(), paste0(name, ".inp"))
   
   writeEpanetInputFile(inpdat, inpfile)
 
@@ -214,7 +222,7 @@ checkReportFileForErrors <- function(reportFile)
   fileLines <- readLines(reportFile, warn = FALSE)
   errorLines <- grep("Input Error \\d+\\:",  fileLines, value = TRUE)
   
-  if (length(errorLines) > 0) {
+  if (length(errorLines)) {
     file.show(reportFile)
     stop("There have been errors:\n", paste(errorLines, collapse = "\n"))
   }    
@@ -235,21 +243,21 @@ runEpanetOnCommandLine <- function(
   dbg = FALSE
 )
 {  
-  rptfile <- replaceFileExtension(inpfile, "rpt")
+  rptfile <- kwb.utils::replaceFileExtension(inpfile, ".rpt")
   
-  if (write.output) {
-    outfile <- replaceFileExtension(inpfile, "out")    
+  outfile <- if (write.output) {
+    kwb.utils::replaceFileExtension(inpfile, ".out")    
   } else {
-    outfile <- ""
+    ""
   }
   
   commandLine <- .epanetCommandLine(epanet.exe, inpfile, rptfile, outfile)
   
-  if (dbg) {
+  output <- if (dbg) {
     # hsShell echoes the command line onto the screen
-    output <- kwb.utils::hsShell(commandLine = commandLine, intern = intern)
+    kwb.utils::hsShell(commandLine = commandLine, intern = intern)
   } else {
-    output <- shell(commandLine, intern = intern)
+    shell(commandLine, intern = intern)
   }
   
   list(
@@ -270,16 +278,4 @@ runEpanetOnCommandLine <- function(
     "\"%s %s %s %s\"", 
     shQuote(epanet.exe), shQuote(inpfile), shQuote(rptfile), outfile
   )
-}
-
-# replaceFileExtension ---------------------------------------------------------
-
-#' Replace File Extension
-#' 
-#' @param filename full path to file of which the extension is to be changed
-#' @param newExtension new extension to be given to the file, without dot "."
-#' 
-replaceFileExtension <- function(filename, newExtension)
-{
-  gsub("\\.[^\\.]+$", paste(".", newExtension, sep=""), filename)
 }

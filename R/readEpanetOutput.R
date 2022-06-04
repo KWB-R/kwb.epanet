@@ -19,10 +19,10 @@ outputFileSize <- function(configuration)
   
   Nlinks <- Npipes + Npumps + Nvalves
   
-  size.prolog <- 884 + 36 * Nnodes + 52 * Nlinks + 8 * Ntanks 
-  size.energy.use <- 28 * Npumps + 4   
-  size.dynamic.results <- (16 * Nnodes + 32 * Nlinks) * Nperiods
-  size.epilog <- 28   
+  size.prolog <- 884L + 36L * Nnodes + 52L * Nlinks + 8L * Ntanks 
+  size.energy.use <- 28L * Npumps + 4L   
+  size.dynamic.results <- (16L * Nnodes + 32L * Nlinks) * Nperiods
+  size.epilog <- 28L
   
   bytes <- size.prolog + size.energy.use + size.dynamic.results + size.epilog
   
@@ -47,13 +47,16 @@ getNumberOfPeriods <- function(configuration)
   
   stopifnot(!is.null(times))
   
-  hydraulic.timestep <- times[times[[1]] == "Hydraulic Timestep", 2]
-  duration <- times[times[[1]] == "Duration", 2]
+  t1 <- times[[1L]]
+  hydraulic.timestep <- times[t1 == "Hydraulic Timestep", 2L]
+  duration <- times[t1 == "Duration", 2L]
+
+  paste_zero_seconds <- function(x) paste(x, "00", sep = ":")
   
   kwb.utils::quotient(
-    .hhmmssToSeconds(paste(duration, "00", sep = ":")),
-    .hhmmssToSeconds(paste(hydraulic.timestep, "00", sep = ":"))
-  )  
+    .hhmmssToSeconds(paste_zero_seconds(duration)),
+    .hhmmssToSeconds(paste_zero_seconds(hydraulic.timestep))
+  )
 }
 
 # reportEnergyUse --------------------------------------------------------------
@@ -132,23 +135,17 @@ getNodeResults <- function(outdat, nodes, vars = c("d", "h", "p", "wq"))
     varNameInfo <- varInfo$nodeVariables
   }
   
-  result <- NULL
-  
-  for (variable in vars) {
+  do.call(rbind, lapply(vars, function(variable) {
     
-    element <- varNameInfo[[variable]][2]
+    element <- varNameInfo[[variable]][2L]
     valueMatrix <- timeSeries[[element]][, objects]
     
-    resultBlock <- cbind(
-      variable = varNameInfo[[variable]][1], 
-      step = 1:nrow(valueMatrix), 
+    cbind(
+      variable = varNameInfo[[variable]][1L], 
+      step = seq_len(nrow(valueMatrix)), 
       as.data.frame(valueMatrix)
     )
-    
-    result <- rbind(result, resultBlock)
-  }
-  
-  result
+  }))
 }
 
 # .variableInfo ----------------------------------------------------------------
@@ -227,7 +224,7 @@ getPumpPerformance <- function(inpdata, outdata, pumpnames)
       pumpPerformance, 
       data.frame(
         pumpnames = pumpname,
-        step = 1:nrow(tmp), 
+        step = seq_len(nrow(tmp)), 
         tmp
       )
     )
@@ -302,11 +299,13 @@ getNodeTimeseriesFromOutputData <- function(outdat)
  
   .stopOnEitherNull(prolog, dynamicResults)
   
+  get_ts <- function(x) .getNodePropertyTimeSeries(dynamicResults, x, prolog)
+  
   list(
-    demands = .getNodePropertyTimeSeries(dynamicResults, "DemandAtEachNode", prolog),
-    heads = .getNodePropertyTimeSeries(dynamicResults, "HeadAtEachNode", prolog),
-    pressures = .getNodePropertyTimeSeries(dynamicResults, "PressureAtEachNode", prolog),
-    waterQualities = .getNodePropertyTimeSeries(dynamicResults, "WaterQualityAtEachNode", prolog)
+    demands = get_ts("DemandAtEachNode"),
+    heads = get_ts("HeadAtEachNode"),
+    pressures = get_ts("PressureAtEachNode"),
+    waterQualities = get_ts("WaterQualityAtEachNode")
   )
 }
 
@@ -324,15 +323,17 @@ getLinkTimeseriesFromOutputData <- function(outdat)
 
   .stopOnEitherNull(prolog, dynamicResults)
   
+  get_ts <- function(x) .getLinkPropertyTimeSeries(dynamicResults, x, prolog)
+  
   list(
-    flows = .getLinkPropertyTimeSeries(dynamicResults, "FlowInEachLink", prolog),
-    velocities = .getLinkPropertyTimeSeries(dynamicResults, "VelocityInEachLink", prolog),
-    headlosses = .getLinkPropertyTimeSeries(dynamicResults, "HeadlossForEachLink", prolog),
-    avgWaterQualities = .getLinkPropertyTimeSeries(dynamicResults, "AvgWaterQualityInEachLink", prolog),
-    statusCodes = .getLinkPropertyTimeSeries(dynamicResults, "StatusCodeForEachLink", prolog),
-    settings = .getLinkPropertyTimeSeries(dynamicResults, "SettingForEachLink", prolog),
-    reactionRates = .getLinkPropertyTimeSeries(dynamicResults, "ReactionRateForEachLink", prolog),
-    frictionFactors = .getLinkPropertyTimeSeries(dynamicResults, "FrictionFactorForEachLink", prolog)
+    flows = get_ts("FlowInEachLink"),
+    velocities = get_ts("VelocityInEachLink"),
+    headlosses = get_ts("HeadlossForEachLink"),
+    avgWaterQualities = get_ts("AvgWaterQualityInEachLink"),
+    statusCodes = get_ts("StatusCodeForEachLink"),
+    settings = get_ts("SettingForEachLink"),
+    reactionRates = get_ts("ReactionRateForEachLink"),
+    frictionFactors = get_ts("FrictionFactorForEachLink")
   )
 }
 
@@ -359,12 +360,12 @@ getLinkTimeseriesFromOutputData <- function(outdat)
 showProperties <- function(outdata) 
 {
   cat("Available node properties:\n")
-  print(names(outdata$dynamicResults[[1]]$NodeData))
+  print(names(outdata$dynamicResults[[1L]]$NodeData))
   #[1] "DemandAtEachNode"       "HeadAtEachNode"         "PressureAtEachNode"    
   #[4] "WaterQualityAtEachNode"
 
   cat("Available link properties:\n")
-  print(names(outdata$dynamicResults[[1]]$LinkData))
+  print(names(outdata$dynamicResults[[1L]]$LinkData))
   #[1] "FlowInEachLink"            "VelocityInEachLink"       
   #[3] "HeadlossForEachLink"       "AvgWaterQualityInEachLink"
   #[5] "StatusCodeForEachLink"     "SettingForEachLink"       
