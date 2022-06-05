@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".readProlog() works", {
+test_that("readProlog() works", {
 
   expect_error(
-    kwb.epanet:::.readProlog()
+    kwb.epanet:::readProlog()
     # Argument "con" fehlt (ohne Standardwert)
   )
 

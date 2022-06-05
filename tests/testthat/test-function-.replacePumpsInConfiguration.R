@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".replacePumpsInConfiguration() works", {
+test_that("replacePumpsInConfiguration() works", {
 
   expect_error(
-    kwb.epanet:::.replacePumpsInConfiguration()
+    kwb.epanet:::replacePumpsInConfiguration()
     # Argument "newCurvesData" fehlt (ohne Standardwert)
   )
 

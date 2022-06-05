@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".stopOnMissingColumns() works", {
+test_that("stopOnMissingColumns() works", {
 
   expect_error(
-    kwb.epanet:::.stopOnMissingColumns()
+    kwb.epanet:::stopOnMissingColumns()
     # Argument "availableColumns" fehlt (ohne Standardwert)
   )
 

@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".removeConcernedRows() works", {
+test_that("removeConcernedRows() works", {
 
   expect_error(
-    kwb.epanet:::.removeConcernedRows()
+    kwb.epanet:::removeConcernedRows()
     # Argument "rows" fehlt (ohne Standardwert)
   )
 

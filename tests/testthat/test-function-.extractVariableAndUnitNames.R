@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".extractVariableAndUnitNames() works", {
+test_that("extractVariableAndUnitNames() works", {
 
   expect_error(
-    kwb.epanet:::.extractVariableAndUnitNames()
+    kwb.epanet:::extractVariableAndUnitNames()
     # konnte Funktion "hsTrim" nicht finden
   )
 

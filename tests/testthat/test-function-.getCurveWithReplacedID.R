@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".getCurveWithReplacedID() works", {
+test_that("getCurveWithReplacedID() works", {
 
   expect_error(
-    kwb.epanet:::.getCurveWithReplacedID()
+    kwb.epanet:::getCurveWithReplacedID()
     # Argument "curveData" fehlt (ohne Standardwert)
   )
 

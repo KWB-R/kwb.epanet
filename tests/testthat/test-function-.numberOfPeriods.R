@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".numberOfPeriods() works", {
+test_that("numberOfPeriods() works", {
 
   expect_error(
-    kwb.epanet:::.numberOfPeriods()
+    kwb.epanet:::numberOfPeriods()
     # Argument "prolog" fehlt (ohne Standardwert)
   )
 

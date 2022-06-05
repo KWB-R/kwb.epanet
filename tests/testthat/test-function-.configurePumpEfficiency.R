@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".configurePumpEfficiency() works", {
+test_that("configurePumpEfficiency() works", {
 
   expect_error(
-    kwb.epanet:::.configurePumpEfficiency()
+    kwb.epanet:::configurePumpEfficiency()
     # Argument "pumpIDs" fehlt (ohne Standardwert)
   )
 

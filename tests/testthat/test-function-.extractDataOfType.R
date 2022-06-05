@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".extractDataOfType() works", {
+test_that("extractDataOfType() works", {
 
   expect_error(
-    kwb.epanet:::.extractDataOfType()
+    kwb.epanet:::extractDataOfType()
     # Argument "reportLines" fehlt (ohne Standardwert)
   )
 

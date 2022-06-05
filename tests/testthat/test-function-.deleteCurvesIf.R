@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".deleteCurvesIf() works", {
+test_that("deleteCurvesIf() works", {
 
   expect_error(
-    kwb.epanet:::.deleteCurvesIf()
+    kwb.epanet:::deleteCurvesIf()
     # Argument "deleteOldCurves" fehlt (ohne Standardwert)
   )
 

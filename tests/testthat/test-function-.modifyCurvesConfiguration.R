@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".modifyCurvesConfiguration() works", {
+test_that("modifyCurvesConfiguration() works", {
 
   expect_error(
-    kwb.epanet:::.modifyCurvesConfiguration()
+    kwb.epanet:::modifyCurvesConfiguration()
     # Argument "curveNamePrefix" fehlt (ohne Standardwert)
   )
 

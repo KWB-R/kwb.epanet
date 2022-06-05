@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".getRowIndicesOfSection() works", {
+test_that("getRowIndicesOfSection() works", {
 
   expect_error(
-    kwb.epanet:::.getRowIndicesOfSection()
+    kwb.epanet:::getRowIndicesOfSection()
     # Argument "txtlines" fehlt (ohne Standardwert)
   )
 

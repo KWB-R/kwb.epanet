@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".replacedPumpsInfo() works", {
+test_that("replacedPumpsInfo() works", {
 
   expect_error(
-    kwb.epanet:::.replacedPumpsInfo()
+    kwb.epanet:::replacedPumpsInfo()
     # Argument "pumpsToReplace" fehlt (ohne Standardwert)
   )
 

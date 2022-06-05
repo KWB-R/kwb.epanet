@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".readStringOfLength() works", {
+test_that("readStringOfLength() works", {
 
   expect_error(
-    kwb.epanet:::.readStringOfLength()
+    kwb.epanet:::readStringOfLength()
     # Argument "con" fehlt (ohne Standardwert)
   )
 

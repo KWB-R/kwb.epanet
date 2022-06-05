@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".setReportVariable() works", {
+test_that("setReportVariable() works", {
 
   expect_error(
-    kwb.epanet:::.setReportVariable()
+    kwb.epanet:::setReportVariable()
     # Argument "section" fehlt (ohne Standardwert)
   )
 

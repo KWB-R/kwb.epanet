@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".getSectionFromTextLines() works", {
+test_that("getSectionFromTextLines() works", {
 
   expect_error(
-    kwb.epanet:::.getSectionFromTextLines()
+    kwb.epanet:::getSectionFromTextLines()
     # Argument "txtlines" fehlt (ohne Standardwert)
   )
 

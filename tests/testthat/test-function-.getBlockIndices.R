@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".getBlockIndices() works", {
+test_that("getBlockIndices() works", {
 
   expect_error(
-    kwb.epanet:::.getBlockIndices()
+    kwb.epanet:::getBlockIndices()
     # Argument "starts" fehlt (ohne Standardwert)
   )
 

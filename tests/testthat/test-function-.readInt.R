@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".readInt() works", {
+test_that("readInt() works", {
 
   expect_error(
-    kwb.epanet:::.readInt()
+    kwb.epanet:::readInt()
     # Argument "con" fehlt (ohne Standardwert)
   )
 

@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".trimSpaceAndOptionalSemicolon() works", {
+test_that("trimSpaceAndOptionalSemicolon() works", {
 
   expect_error(
-    kwb.epanet:::.trimSpaceAndOptionalSemicolon()
+    kwb.epanet:::trimSpaceAndOptionalSemicolon()
     # Argument "x" fehlt (ohne Standardwert)
   )
 

@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".spaceSeparatedAndCollapsed() works", {
+test_that("spaceSeparatedAndCollapsed() works", {
 
   expect_error(
-    kwb.epanet:::.spaceSeparatedAndCollapsed()
+    kwb.epanet:::spaceSeparatedAndCollapsed()
     # Argument "x" fehlt (ohne Standardwert)
   )
 

@@ -36,7 +36,7 @@ calculateSpecificEnergyDemand <-  function(
     
     for (index in indicesOfMoreEfficient) {
       
-      combinedSchemes <- .findCombinedSchemes(
+      combinedSchemes <- findCombinedSchemes(
         allSchemes = totalEnergy, 
         baseScheme = totalEnergy[index, ],
         waterDemand = waterDemand, 
@@ -73,8 +73,8 @@ calculateSpecificEnergyDemand <-  function(
   totalEnergy
 }
 
-# .findCombinedSchemes ---------------------------------------------------------
-.findCombinedSchemes <- function(allSchemes, baseScheme, waterDemand, COLNAMES)
+# findCombinedSchemes ----------------------------------------------------------
+findCombinedSchemes <- function(allSchemes, baseScheme, waterDemand, COLNAMES)
 {
   allSchemes$timeFraction <- kwb.utils::quotient(
     waterDemand - allSchemes[[COLNAMES$Q]], 
@@ -90,7 +90,7 @@ calculateSpecificEnergyDemand <-  function(
   combiSchemes[[COLNAMES$Q]] <- V1 + V2
   
   for (columnName in c(COLNAMES$Eff, COLNAMES$E)) {
-    combiSchemes[[columnName]] <- .weightedAverage(
+    combiSchemes[[columnName]] <- weightedAverage(
       weight1 = V1, 
       value1 = baseScheme[[columnName]], weight2 = V2, 
       value2 = combiSchemes[[columnName]]
@@ -107,8 +107,8 @@ calculateSpecificEnergyDemand <-  function(
   kwb.utils::removeColumns(combiSchemes, "timeFraction")
 }
 
-# .weightedAverage -------------------------------------------------------------
-.weightedAverage <- function(weight1, value1, weight2, value2)
+# weightedAverage --------------------------------------------------------------
+weightedAverage <- function(weight1, value1, weight2, value2)
 {
   (weight1 * value1 + weight2 * value2) / (weight1 + weight2)
 }
@@ -135,7 +135,7 @@ plotOptimisationResults <- function(
   ...
 )
 {
-  pch <- .getPlotCharacters(
+  pch <- getPlotCharacters(
     badQualityWells = userConstraints$namesOfWellsWithQualityProblems,
     configurationNames = totalEnergy$PumpConfigName,
     Q = totalEnergy$Q.m3.per.hour,
@@ -154,7 +154,7 @@ plotOptimisationResults <- function(
     xlab = "Specific energy (kWh/m\u00b3)", 
     ylab = "Average efficiency (%)",
     clab = "Total\npumping rate\n(m\xb3/h)", # \xb3 = "to the power of three"!
-    main = .defaultLabel(name, pumpsToReplace), 
+    main = defaultLabel(name, pumpsToReplace), 
     las = 1,
     ...
   )
@@ -194,8 +194,8 @@ plotOptimisationResults <- function(
   )
 }
 
-# .getPlotCharacters -----------------------------------------------------------
-.getPlotCharacters <- function(badQualityWells, configurationNames, Q, demand)
+# getPlotCharacters ------------------------------------------------------------
+getPlotCharacters <- function(badQualityWells, configurationNames, Q, demand)
 {
   PCH <- kwb.plot:::getPlotCharacterConstants()
   containsBadQualityWell <- grepl(pattern = paste(badQualityWells, 
@@ -207,14 +207,14 @@ plotOptimisationResults <- function(
   pch
 }
 
-# .defaultLabel ----------------------------------------------------------------
-.defaultLabel <- function(name, pumpsToReplace)
+# defaultLabel -----------------------------------------------------------------
+defaultLabel <- function(name, pumpsToReplace)
 {
-  paste("Optimisation strategy:", name, "\n", .replacedPumpsInfo(pumpsToReplace))
+  paste("Optimisation strategy:", name, "\n", replacedPumpsInfo(pumpsToReplace))
 }
 
-# .replacedPumpsInfo -----------------------------------------------------------
-.replacedPumpsInfo <- function(pumpsToReplace) 
+# replacedPumpsInfo ------------------------------------------------------------
+replacedPumpsInfo <- function(pumpsToReplace) 
 {
   if (any(pumpsToReplace != "")) {
     
@@ -254,7 +254,7 @@ runOptimisationStrategy <- function(
 {
   # Replace pumps if required
   if (any(optimisationStrategy$pumpsToReplace != "")) {
-    configuration <- .replacePumpsInConfiguration(
+    configuration <- replacePumpsInConfiguration(
       configuration = configuration,
       newCurvesData = newCurvesData, 
       pumpsToReplace = optimisationStrategy$pumpsToReplace
@@ -263,7 +263,7 @@ runOptimisationStrategy <- function(
   
   # Prepare main title and average demand for plots (out of the following loop)
   if (showLivePlot) {    
-    main <- .defaultLabel(
+    main <- defaultLabel(
       name = optimisationStrategy$name, 
       pumpsToReplace = optimisationStrategy$pumpsToReplace
     )    
@@ -288,7 +288,7 @@ runOptimisationStrategy <- function(
     epanetResult <- runEpanetConfiguration (inpdat = configuration)
     
     # Read and calculate energy usage
-    tmpEnergyPerPump <- .getEnergyPerPump(
+    tmpEnergyPerPump <- getEnergyPerPump(
       epanetOutput = epanetResult$output, 
       configuration = configuration, 
       schemeID = schemeID)
@@ -298,7 +298,7 @@ runOptimisationStrategy <- function(
       data.frame(tmpEnergyPerPump, stringsAsFactors = FALSE)
     )
     
-    tmpEnergyTotal <- .energyPerPumpToTotalEnergy(
+    tmpEnergyTotal <- energyPerPumpToTotalEnergy(
       tmpEnergyPerPump = tmpEnergyPerPump, 
       operationSchemes = operationSchemes,
       schemeID = schemeID)
@@ -309,7 +309,7 @@ runOptimisationStrategy <- function(
     )
 
     if(showLivePlot) {
-      .liveplot(energyTotal, main, averageDemand)
+      liveplot(energyTotal, main, averageDemand)
     }    
   }
   
@@ -326,16 +326,16 @@ runOptimisationStrategy <- function(
   )
 }
 
-# .replacePumpsInConfiguration -------------------------------------------------
-.replacePumpsInConfiguration <- function(configuration, newCurvesData, pumpsToReplace)
+# replacePumpsInConfiguration --------------------------------------------------
+replacePumpsInConfiguration <- function(configuration, newCurvesData, pumpsToReplace)
 {
-  pumpCurve <- .getCurveWithReplacedID(
+  pumpCurve <- getCurveWithReplacedID(
     curveData = newCurvesData$Pump, 
     pumpsToReplace = pumpsToReplace, 
     prefix = newCurvesData$PumpNamePrefix$PumpCurves
   )
   
-  efficiencyCurve <- .getCurveWithReplacedID(
+  efficiencyCurve <- getCurveWithReplacedID(
     curveData = newCurvesData$GlobalPumpEfficiency, 
     pumpsToReplace = pumpsToReplace, 
     prefix = newCurvesData$PumpNamePrefix$GlobalPumpEfficiency
@@ -349,31 +349,31 @@ runOptimisationStrategy <- function(
   configuration
 }
 
-# .getCurveWithReplacedID ------------------------------------------------------
-.getCurveWithReplacedID <- function(curveData, pumpsToReplace, prefix)
+# getCurveWithReplacedID -------------------------------------------------------
+getCurveWithReplacedID <- function(curveData, pumpsToReplace, prefix)
 {
   curve <- curveData[curveData$ID %in% pumpsToReplace, ]
   curve$ID <- paste0(prefix, curve$ID)
   curve
 }
 
-# .getEnergyPerPump ------------------------------------------------------------
-.getEnergyPerPump <- function(epanetOutput, configuration, schemeID)
+# getEnergyPerPump -------------------------------------------------------------
+getEnergyPerPump <- function(epanetOutput, configuration, schemeID)
 {
-  flowsInListForm <- .getFlowsInListForm(
+  flowsInListForm <- getFlowsInListForm(
     epanetOutput = epanetOutput, 
     configuration = configuration
   )
   
-  .getExtendedEnergyReport(
+  getExtendedEnergyReport(
     epanetOutput = epanetOutput, 
     schemeID = schemeID, 
     flowsInListForm = flowsInListForm
   )
 }
 
-# .getFlowsInListForm ----------------------------------------------------------
-.getFlowsInListForm <- function(epanetOutput, configuration)
+# getFlowsInListForm -----------------------------------------------------------
+getFlowsInListForm <- function(epanetOutput, configuration)
 {
   flows <- getLinkResults(
     epanetOutput, 
@@ -389,8 +389,8 @@ runOptimisationStrategy <- function(
   )
 }
 
-# .getExtendedEnergyReport -----------------------------------------------------
-.getExtendedEnergyReport <- function(epanetOutput, schemeID, flowsInListForm)
+# getExtendedEnergyReport ------------------------------------------------------
+getExtendedEnergyReport <- function(epanetOutput, schemeID, flowsInListForm)
 {
   energyReport <- reportEnergyUse(epanetOutput)
   energyReport <- energyReport[energyReport$Percent.Utilization > 
@@ -401,8 +401,8 @@ runOptimisationStrategy <- function(
   )
 }
 
-# .energyPerPumpToTotalEnergy --------------------------------------------------
-.energyPerPumpToTotalEnergy <- function(
+# energyPerPumpToTotalEnergy ---------------------------------------------------
+energyPerPumpToTotalEnergy <- function(
   tmpEnergyPerPump, operationSchemes, schemeID, COL.Q = "Q.m3.per.hour"
 )
 {
@@ -423,8 +423,8 @@ runOptimisationStrategy <- function(
   )
 }
 
-# .liveplot --------------------------------------------------------------------
-.liveplot <- function(energyTotal, main, averageDemand)
+# liveplot ---------------------------------------------------------------------
+liveplot <- function(energyTotal, main, averageDemand)
 {
   graphics::plot(
     Kw.hr.per.m3.avg ~ Q.m3.per.hour.sum, 

@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".readEnergyUseOfOnePump() works", {
+test_that("readEnergyUseOfOnePump() works", {
 
   expect_error(
-    kwb.epanet:::.readEnergyUseOfOnePump()
+    kwb.epanet:::readEnergyUseOfOnePump()
     # Argument "con" fehlt (ohne Standardwert)
   )
 

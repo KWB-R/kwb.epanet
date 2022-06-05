@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".removeZeroesAtTheEnd() works", {
+test_that("removeZeroesAtTheEnd() works", {
 
   expect_error(
-    kwb.epanet:::.removeZeroesAtTheEnd()
+    kwb.epanet:::removeZeroesAtTheEnd()
     # Argument "x" fehlt (ohne Standardwert)
   )
 

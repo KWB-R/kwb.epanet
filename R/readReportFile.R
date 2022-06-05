@@ -16,13 +16,13 @@ readResultsFromReportFile <- function(reportFile, warn = TRUE)
   reportLines <- readLines(reportFile)  
   
   list(
-    nodeData = .extractDataOfType(reportLines, "Node", warn = warn), 
-    linkData = .extractDataOfType(reportLines, "Link", warn = warn)
+    nodeData = extractDataOfType(reportLines, "Node", warn = warn), 
+    linkData = extractDataOfType(reportLines, "Link", warn = warn)
   )
 }
 
-# .extractDataOfType -----------------------------------------------------------
-.extractDataOfType <- function(reportLines, objectType, warn = TRUE)
+# extractDataOfType ------------------------------------------------------------
+extractDataOfType <- function(reportLines, objectType, warn = TRUE)
 {
   indices <- grep(paste(objectType, "Results at"), reportLines)
   
@@ -51,9 +51,9 @@ readResultsFromReportFile <- function(reportFile, warn = TRUE)
   indicesEmpty <- grep("^\\s*$", reportLines)
   endindex <- min(indicesEmpty[indicesEmpty > startindex]) - 1
   numberOfElements <- endindex - startindex + 1
-  blockindices <- .getBlockIndices(startindices, blocksize = numberOfElements)
+  blockindices <- getBlockIndices(startindices, blocksize = numberOfElements)
   textblock <- reportLines[blockindices]
-  headerInfo <- .extractVariableAndUnitNames(reportLines, index = indices[1])
+  headerInfo <- extractVariableAndUnitNames(reportLines, index = indices[1])
   col.number <- length(headerInfo$variableNames) + 2
   col.names <- paste0("V", seq_len(col.number))
   
@@ -66,9 +66,9 @@ readResultsFromReportFile <- function(reportFile, warn = TRUE)
   
   if (! is.statistic) {
     
-    timestamps.txt <- .extractTimestamps(reportLines, indices)
+    timestamps.txt <- extractTimestamps(reportLines, indices)
     dataFrame$time.txt <- rep(timestamps.txt, each = numberOfElements)
-    dataFrame$time.s <- .hhmmssToSeconds(dataFrame$time.txt)
+    dataFrame$time.s <- hhmmssToSeconds(dataFrame$time.txt)
     dataFrame$time.h <- dataFrame$time.s/3600
     time.columns <- c("time.s", "time.h", "time.txt")
     
@@ -86,14 +86,14 @@ readResultsFromReportFile <- function(reportFile, warn = TRUE)
   }
 }
 
-# .getBlockIndices -------------------------------------------------------------
-.getBlockIndices <- function(starts, blocksize)
+# getBlockIndices --------------------------------------------------------------
+getBlockIndices <- function(starts, blocksize)
 {
   rep(starts, each = blocksize) + rep(seq_len(blocksize) - 1, length(starts))
 }
 
-# .extractVariableAndUnitNames -------------------------------------------------
-.extractVariableAndUnitNames <- function(reportLines, index)
+# extractVariableAndUnitNames --------------------------------------------------
+extractVariableAndUnitNames <- function(reportLines, index)
 {
   variableNames <- kwb.utils::hsTrim(reportLines[index + 2])
   unitNames <- kwb.utils::hsTrim(reportLines[index + 3])
@@ -102,14 +102,14 @@ readResultsFromReportFile <- function(reportFile, warn = TRUE)
   list(variableNames = variableNames, unitNames = unitNames)
 }
 
-# .extractTimestamps -----------------------------------------------------------
-.extractTimestamps <- function(reportLines, indices)
+# extractTimestamps ------------------------------------------------------------
+extractTimestamps <- function(reportLines, indices)
 {
   sapply(strsplit(reportLines[indices], split = " "), "[[", 6)
 }
 
-# .hhmmssToSeconds -------------------------------------------------------------
-.hhmmssToSeconds <- function(x)
+# hhmmssToSeconds --------------------------------------------------------------
+hhmmssToSeconds <- function(x)
 {
   sapply(strsplit(x, ":"), FUN = function(x) sum(as.integer(x) * c(3600, 60, 1)))
 }

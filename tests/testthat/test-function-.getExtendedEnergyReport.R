@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".getExtendedEnergyReport() works", {
+test_that("getExtendedEnergyReport() works", {
 
   expect_error(
-    kwb.epanet:::.getExtendedEnergyReport()
+    kwb.epanet:::getExtendedEnergyReport()
     # Argument "epanetOutput" fehlt (ohne Standardwert)
   )
 

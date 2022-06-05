@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".getNodePropertyTimeSeries() works", {
+test_that("getNodePropertyTimeSeries() works", {
 
   expect_error(
-    kwb.epanet:::.getNodePropertyTimeSeries()
+    kwb.epanet:::getNodePropertyTimeSeries()
     # Argument "dynamicResults" fehlt (ohne Standardwert)
   )
 

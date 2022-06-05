@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".getLinkOrNodeResults() works", {
+test_that("getLinkOrNodeResults() works", {
 
   expect_error(
-    kwb.epanet:::.getLinkOrNodeResults()
+    kwb.epanet:::getLinkOrNodeResults()
     # Argument "outdat" fehlt (ohne Standardwert)
   )
 

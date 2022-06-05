@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".readDynamicResultsForOnePeriod() works", {
+test_that("readDynamicResultsForOnePeriod() works", {
 
   expect_error(
-    kwb.epanet:::.readDynamicResultsForOnePeriod()
+    kwb.epanet:::readDynamicResultsForOnePeriod()
     # Argument "con" fehlt (ohne Standardwert)
   )
 

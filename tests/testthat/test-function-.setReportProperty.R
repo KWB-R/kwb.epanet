@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".setReportProperty() works", {
+test_that("setReportProperty() works", {
 
   expect_error(
-    kwb.epanet:::.setReportProperty()
+    kwb.epanet:::setReportProperty()
     # Argument "name" fehlt (ohne Standardwert)
   )
 

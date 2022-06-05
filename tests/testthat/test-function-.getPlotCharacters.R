@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".getPlotCharacters() works", {
+test_that("getPlotCharacters() works", {
 
   expect_error(
-    kwb.epanet:::.getPlotCharacters()
+    kwb.epanet:::getPlotCharacters()
     # Argument "configurationNames" fehlt (ohne Standardwert)
   )
 

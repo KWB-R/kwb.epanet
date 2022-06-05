@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".yesno() works", {
+test_that("yesno() works", {
 
   expect_error(
-    kwb.epanet:::.yesno()
+    kwb.epanet:::yesno()
     # Argument "yesno" fehlt (ohne Standardwert)
   )
 

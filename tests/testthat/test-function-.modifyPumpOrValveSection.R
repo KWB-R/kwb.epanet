@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".modifyPumpOrValveSection() works", {
+test_that("modifyPumpOrValveSection() works", {
 
   expect_error(
-    kwb.epanet:::.modifyPumpOrValveSection()
+    kwb.epanet:::modifyPumpOrValveSection()
     # Argument "sectionConfig" fehlt (ohne Standardwert)
   )
 

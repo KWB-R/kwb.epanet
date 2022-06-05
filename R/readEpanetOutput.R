@@ -57,8 +57,8 @@ getNumberOfPeriods <- function(configuration)
   paste_zero_seconds <- function(x) paste(x, "00", sep = ":")
   
   kwb.utils::quotient(
-    .hhmmssToSeconds(paste_zero_seconds(duration)),
-    .hhmmssToSeconds(paste_zero_seconds(hydraulic.timestep))
+    hhmmssToSeconds(paste_zero_seconds(duration)),
+    hhmmssToSeconds(paste_zero_seconds(hydraulic.timestep))
   )
 }
 
@@ -102,7 +102,7 @@ getLinkResults <- function(
   outdat, links, vars = c("q", "v", "hl", "wq", "sta", "set", "rr", "ff")
 )
 {
-  .getLinkOrNodeResults(outdat, TRUE, links, vars)
+  getLinkOrNodeResults(outdat, TRUE, links, vars)
 }
 
 # getNodeResults ---------------------------------------------------------------
@@ -119,13 +119,13 @@ getLinkResults <- function(
 #' @export
 getNodeResults <- function(outdat, nodes, vars = c("d", "h", "p", "wq"))
 {
-  .getLinkOrNodeResults(outdat, FALSE, nodes, vars)
+  getLinkOrNodeResults(outdat, FALSE, nodes, vars)
 }
 
-# .getLinkOrNodeResults --------------------------------------------------------
-.getLinkOrNodeResults <- function(outdat, linkResults = TRUE, objects, vars)
+# getLinkOrNodeResults ---------------------------------------------------------
+getLinkOrNodeResults <- function(outdat, linkResults = TRUE, objects, vars)
 {
-  varInfo <- .variableInfo()
+  varInfo <- variableInfo()
   
   if (linkResults) {
     
@@ -151,8 +151,8 @@ getNodeResults <- function(outdat, nodes, vars = c("d", "h", "p", "wq"))
   }))
 }
 
-# .variableInfo ----------------------------------------------------------------
-.variableInfo <- function()
+# variableInfo -----------------------------------------------------------------
+variableInfo <- function()
 {
   list(
     linkVariables = list(
@@ -300,9 +300,9 @@ getNodeTimeseriesFromOutputData <- function(outdat)
   dynamicResults <- outdat$dynamicResults
   prolog <- outdat$prolog
  
-  .stopOnEitherNull(prolog, dynamicResults)
+  stopOnEitherNull(prolog, dynamicResults)
   
-  get_ts <- function(x) .getNodePropertyTimeSeries(dynamicResults, x, prolog)
+  get_ts <- function(x) getNodePropertyTimeSeries(dynamicResults, x, prolog)
   
   list(
     demands = get_ts("DemandAtEachNode"),
@@ -324,9 +324,9 @@ getLinkTimeseriesFromOutputData <- function(outdat)
   dynamicResults <- outdat$dynamicResults
   prolog <- outdat$prolog
 
-  .stopOnEitherNull(prolog, dynamicResults)
+  stopOnEitherNull(prolog, dynamicResults)
   
-  get_ts <- function(x) .getLinkPropertyTimeSeries(dynamicResults, x, prolog)
+  get_ts <- function(x) getLinkPropertyTimeSeries(dynamicResults, x, prolog)
   
   list(
     flows = get_ts("FlowInEachLink"),
@@ -340,8 +340,8 @@ getLinkTimeseriesFromOutputData <- function(outdat)
   )
 }
 
-# .stopOnEitherNull ------------------------------------------------------------
-.stopOnEitherNull <- function(prolog, dynamicResults)
+# stopOnEitherNull -------------------------------------------------------------
+stopOnEitherNull <- function(prolog, dynamicResults)
 {
   if (is.null(prolog) || is.null(dynamicResults)) {
     stop(
@@ -409,17 +409,17 @@ readEpanetOutputFile <- function(
   on.exit(close(con))
   
   # Always read prolog and energy use
-  prolog <- .readProlog(con)  
-  energyUse <- .readEnergyUse(con, prolog)  
+  prolog <- readProlog(con)  
+  energyUse <- readEnergyUse(con, prolog)  
   
   if (read.dynamicResults || read.epilog) {
-    dynamicResults <- .readDynamicResults(con, prolog)  
+    dynamicResults <- readDynamicResults(con, prolog)  
   }
   
-  #unknown <- .readStringOfLength(con, 4)
+  #unknown <- readStringOfLength(con, 4)
   
   if (read.epilog) {
-    epilog <- .readEpilog(con)    
+    epilog <- readEpilog(con)    
   }
   
   # initialise result list
@@ -438,26 +438,26 @@ readEpanetOutputFile <- function(
   }
   
   if (read.epilog) {
-    epilog <- .readEpilog(con)    
+    epilog <- readEpilog(con)    
   }
   
   result
 }
 
-# .getNodePropertyTimeSeries ---------------------------------------------------
-.getNodePropertyTimeSeries <- function(dynamicResults, property, prolog)
+# getNodePropertyTimeSeries ----------------------------------------------------
+getNodePropertyTimeSeries <- function(dynamicResults, property, prolog)
 {
-  .getNodeOrLinkPropertyTimeSeries(dynamicResults, property, prolog, "Node")
+  getNodeOrLinkPropertyTimeSeries(dynamicResults, property, prolog, "Node")
 }
 
-# .getLinkPropertyTimeSeries ---------------------------------------------------
-.getLinkPropertyTimeSeries <- function(dynamicResults, property, prolog)
+# getLinkPropertyTimeSeries ----------------------------------------------------
+getLinkPropertyTimeSeries <- function(dynamicResults, property, prolog)
 {
-  .getNodeOrLinkPropertyTimeSeries(dynamicResults, property, prolog, "Link")
+  getNodeOrLinkPropertyTimeSeries(dynamicResults, property, prolog, "Link")
 }
 
-# .getNodeOrLinkPropertyTimeSeries ---------------------------------------------
-.getNodeOrLinkPropertyTimeSeries <- function(
+# getNodeOrLinkPropertyTimeSeries ----------------------------------------------
+getNodeOrLinkPropertyTimeSeries <- function(
   dynamicResults, property, prolog, nodeOrLink
 )
 {
@@ -479,11 +479,11 @@ readEpanetOutputFile <- function(
   m
 }
 
-# .readEpilog ------------------------------------------------------------------
-.readEpilog <- function(con)
+# readEpilog -------------------------------------------------------------------
+readEpilog <- function(con)
 {
-  floatValues <- .readDbl(con, 4)
-  intValues <- .readInt(con, 3)
+  floatValues <- readDbl(con, 4)
+  intValues <- readInt(con, 3)
   
   list(
     AvgBulkReactionRate = floatValues[1], AvgWallReactionRate = floatValues[2], 
@@ -493,19 +493,19 @@ readEpanetOutputFile <- function(
   )
 }
 
-# .numberOfPeriods -------------------------------------------------------------
-.numberOfPeriods <- function(prolog)
+# numberOfPeriods --------------------------------------------------------------
+numberOfPeriods <- function(prolog)
 {
   prolog$SimulationDuration/prolog$ReportingTimeStep + 1
 }
 
-# .readDynamicResults ----------------------------------------------------------
-.readDynamicResults <- function(con, prolog)
+# readDynamicResults -----------------------------------------------------------
+readDynamicResults <- function(con, prolog)
 {
   dynamicResults <- list()
   
-  for (i in seq(1, by = 1, length.out = .numberOfPeriods(prolog))) {
-    dynamicResults[[i]] <- .readDynamicResultsForOnePeriod(
+  for (i in seq(1, by = 1, length.out = numberOfPeriods(prolog))) {
+    dynamicResults[[i]] <- readDynamicResultsForOnePeriod(
       con, prolog$NumberOfNodes, prolog$NumberOfLinks
     )
   }
@@ -513,13 +513,13 @@ readEpanetOutputFile <- function(
   dynamicResults
 }
 
-# .readEnergyUse ---------------------------------------------------------------
-.readEnergyUse <- function(con, prolog)
+# readEnergyUse ----------------------------------------------------------------
+readEnergyUse <- function(con, prolog)
 {
   energyUse <- NULL
   
   for (i in seq(1, by = 1, length.out = prolog$NumberOfPumps)) {
-    energyUse <- rbind(energyUse, .readEnergyUseOfOnePump(con))
+    energyUse <- rbind(energyUse, readEnergyUseOfOnePump(con))
   }
   
   PeakEnergyUsage <- readBin(con, double(), size = 4)
@@ -527,31 +527,31 @@ readEpanetOutputFile <- function(
   energyUse
 }
 
-# .readDynamicResultsForOnePeriod ----------------------------------------------
-.readDynamicResultsForOnePeriod <- function(con, numberOfNodes, numberOfLinks)
+# readDynamicResultsForOnePeriod -----------------------------------------------
+readDynamicResultsForOnePeriod <- function(con, numberOfNodes, numberOfLinks)
 {
   list(
     NodeData = data.frame(
-      DemandAtEachNode = .readDbl(con, numberOfNodes), 
-      HeadAtEachNode = .readDbl(con, numberOfNodes),
-      PressureAtEachNode = .readDbl(con, numberOfNodes), 
-      WaterQualityAtEachNode = .readDbl(con, numberOfNodes)
+      DemandAtEachNode = readDbl(con, numberOfNodes), 
+      HeadAtEachNode = readDbl(con, numberOfNodes),
+      PressureAtEachNode = readDbl(con, numberOfNodes), 
+      WaterQualityAtEachNode = readDbl(con, numberOfNodes)
     ), 
     LinkData = data.frame(
-      FlowInEachLink = .readDbl(con, numberOfLinks), 
-      VelocityInEachLink = .readDbl(con, numberOfLinks), 
-      HeadlossForEachLink = .readDbl(con, numberOfLinks), 
-      AvgWaterQualityInEachLink = .readDbl(con, numberOfLinks), 
-      StatusCodeForEachLink = .readDbl(con, numberOfLinks), 
-      SettingForEachLink = .readDbl(con, numberOfLinks), 
-      ReactionRateForEachLink = .readDbl(con, numberOfLinks), 
-      FrictionFactorForEachLink = .readDbl(con, numberOfLinks)
+      FlowInEachLink = readDbl(con, numberOfLinks), 
+      VelocityInEachLink = readDbl(con, numberOfLinks), 
+      HeadlossForEachLink = readDbl(con, numberOfLinks), 
+      AvgWaterQualityInEachLink = readDbl(con, numberOfLinks), 
+      StatusCodeForEachLink = readDbl(con, numberOfLinks), 
+      SettingForEachLink = readDbl(con, numberOfLinks), 
+      ReactionRateForEachLink = readDbl(con, numberOfLinks), 
+      FrictionFactorForEachLink = readDbl(con, numberOfLinks)
     )
   )
 }
 
-# .readEnergyUseOfOnePump ------------------------------------------------------
-.readEnergyUseOfOnePump <- function(con)
+# readEnergyUseOfOnePump -------------------------------------------------------
+readEnergyUseOfOnePump <- function(con)
 {
   data.frame(
     PumpIndexInListOfLinks = readBin(con, integer()), 
@@ -565,26 +565,26 @@ readEpanetOutputFile <- function(
   )
 }
 
-# .readNumberOfStringsOfLength -------------------------------------------------
-.readNumberOfStringsOfLength <- function(con, numberOfStrings, stringLength)
+# readNumberOfStringsOfLength --------------------------------------------------
+readNumberOfStringsOfLength <- function(con, numberOfStrings, stringLength)
 {
   strings <- character()
   
   for (i in seq(1, by = 1, length.out = numberOfStrings)) {
-    strings <- c(strings, .readStringOfLength(con, stringLength))
+    strings <- c(strings, readStringOfLength(con, stringLength))
   }
   
   strings
 }
 
-# .readStringOfLength ----------------------------------------------------------
-.readStringOfLength <- function(con, stringLength)
+# readStringOfLength -----------------------------------------------------------
+readStringOfLength <- function(con, stringLength)
 {
   rawToChar(readBin(con, raw(), stringLength))
 }
 
-# .readProlog ------------------------------------------------------------------
-.readProlog <- function(con)
+# readProlog -------------------------------------------------------------------
+readProlog <- function(con)
 {
   prolog <- as.list(readBin(con, integer(), 15))
   
@@ -596,35 +596,35 @@ readEpanetOutputFile <- function(
     "ReportingStartTime", "ReportingTimeStep", "SimulationDuration"
   )
   
-  prolog$ProblemTitle1 <- .readStringOfLength(con, 80)
-  prolog$ProblemTitle2 <- .readStringOfLength(con, 80)
-  prolog$ProblemTitle3 <- .readStringOfLength(con, 80)
-  prolog$NameOfInputFile <- .readStringOfLength(con, 260)
-  prolog$NameOfReportFile <- .readStringOfLength(con, 260)
-  prolog$NameOfChemical <- .readStringOfLength(con, 32)
-  prolog$ChemicalConcentrationUnits <- .readStringOfLength(con, 32)
-  prolog$IDStringOfEachNode <- .readNumberOfStringsOfLength(con, prolog$NumberOfNodes, 32)
-  prolog$IDStringOfEachLink <- .readNumberOfStringsOfLength(con, prolog$NumberOfLinks, 32)
-  prolog$IndexOfHeadNodeOfEachLink <- .readInt(con, prolog$NumberOfLinks)
-  prolog$IndexOfTailNodeOfEachLink <- .readInt(con, prolog$NumberOfLinks)
-  prolog$TypeCodeOfEachLink <- .readInt(con, prolog$NumberOfLinks)
-  prolog$NodeIndexOfEachTank <- .readInt(con, prolog$NumberOfReservoirsAndTanks)
-  prolog$CrossSectionalAreaOfEachTank <- .readDbl(con, prolog$NumberOfReservoirsAndTanks)
-  prolog$ElevationOfEachNode <- .readDbl(con, prolog$NumberOfNodes)
-  prolog$LengthOfEachLink <- .readDbl(con, prolog$NumberOfLinks)
-  prolog$DiameterOfEachLink <- .readDbl(con, prolog$NumberOfLinks)
+  prolog$ProblemTitle1 <- readStringOfLength(con, 80)
+  prolog$ProblemTitle2 <- readStringOfLength(con, 80)
+  prolog$ProblemTitle3 <- readStringOfLength(con, 80)
+  prolog$NameOfInputFile <- readStringOfLength(con, 260)
+  prolog$NameOfReportFile <- readStringOfLength(con, 260)
+  prolog$NameOfChemical <- readStringOfLength(con, 32)
+  prolog$ChemicalConcentrationUnits <- readStringOfLength(con, 32)
+  prolog$IDStringOfEachNode <- readNumberOfStringsOfLength(con, prolog$NumberOfNodes, 32)
+  prolog$IDStringOfEachLink <- readNumberOfStringsOfLength(con, prolog$NumberOfLinks, 32)
+  prolog$IndexOfHeadNodeOfEachLink <- readInt(con, prolog$NumberOfLinks)
+  prolog$IndexOfTailNodeOfEachLink <- readInt(con, prolog$NumberOfLinks)
+  prolog$TypeCodeOfEachLink <- readInt(con, prolog$NumberOfLinks)
+  prolog$NodeIndexOfEachTank <- readInt(con, prolog$NumberOfReservoirsAndTanks)
+  prolog$CrossSectionalAreaOfEachTank <- readDbl(con, prolog$NumberOfReservoirsAndTanks)
+  prolog$ElevationOfEachNode <- readDbl(con, prolog$NumberOfNodes)
+  prolog$LengthOfEachLink <- readDbl(con, prolog$NumberOfLinks)
+  prolog$DiameterOfEachLink <- readDbl(con, prolog$NumberOfLinks)
   
   prolog
 }
 
-# .readInt ---------------------------------------------------------------------
-.readInt <- function(con, n)
+# readInt ----------------------------------------------------------------------
+readInt <- function(con, n)
 {
   readBin(con, integer(), n)
 }
 
-# .readDbl ---------------------------------------------------------------------
-.readDbl <- function(con, n)
+# readDbl ----------------------------------------------------------------------
+readDbl <- function(con, n)
 {
   readBin(con, double(), n, size = 4)
 }

@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".readDynamicResults() works", {
+test_that("readDynamicResults() works", {
 
   expect_error(
-    kwb.epanet:::.readDynamicResults()
+    kwb.epanet:::readDynamicResults()
     # Argument "prolog" fehlt (ohne Standardwert)
   )
 

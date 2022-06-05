@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".liveplot() works", {
+test_that("liveplot() works", {
 
   expect_error(
-    kwb.epanet:::.liveplot()
+    kwb.epanet:::liveplot()
     # Argument "energyTotal" fehlt (ohne Standardwert)
   )
 

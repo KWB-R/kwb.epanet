@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".substSpecialCharacters() works", {
+test_that("substSpecialCharacters() works", {
 
   expect_error(
-    kwb.epanet:::.substSpecialCharacters()
+    kwb.epanet:::substSpecialCharacters()
     # Argument "x" fehlt (ohne Standardwert)
   )
 

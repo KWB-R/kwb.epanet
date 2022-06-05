@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".getFlowsInListForm() works", {
+test_that("getFlowsInListForm() works", {
 
   expect_error(
-    kwb.epanet:::.getFlowsInListForm()
+    kwb.epanet:::getFlowsInListForm()
     # Argument "epanetOutput" fehlt (ohne Standardwert)
   )
 

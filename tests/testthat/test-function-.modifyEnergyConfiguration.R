@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".modifyEnergyConfiguration() works", {
+test_that("modifyEnergyConfiguration() works", {
 
   expect_error(
-    kwb.epanet:::.modifyEnergyConfiguration()
+    kwb.epanet:::modifyEnergyConfiguration()
     # Argument "energyConfig" fehlt (ohne Standardwert)
   )
 

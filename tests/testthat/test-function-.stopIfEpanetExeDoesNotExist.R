@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".stopIfEpanetExeDoesNotExist() works", {
+test_that("stopIfEpanetExeDoesNotExist() works", {
 
   expect_error(
-    kwb.epanet:::.stopIfEpanetExeDoesNotExist()
+    kwb.epanet:::stopIfEpanetExeDoesNotExist()
     # Argument "epanet.dir" fehlt (ohne Standardwert)
   )
 

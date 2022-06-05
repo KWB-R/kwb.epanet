@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".stopOnEitherNull() works", {
+test_that("stopOnEitherNull() works", {
 
   expect_error(
-    kwb.epanet:::.stopOnEitherNull()
+    kwb.epanet:::stopOnEitherNull()
     # Argument "prolog" fehlt (ohne Standardwert)
   )
 

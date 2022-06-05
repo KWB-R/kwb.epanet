@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".hhmmssToSeconds() works", {
+test_that("hhmmssToSeconds() works", {
 
   expect_error(
-    kwb.epanet:::.hhmmssToSeconds()
+    kwb.epanet:::hhmmssToSeconds()
     # Argument "x" fehlt (ohne Standardwert)
   )
 

@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".energyPerPumpToTotalEnergy() works", {
+test_that("energyPerPumpToTotalEnergy() works", {
 
   expect_error(
-    kwb.epanet:::.energyPerPumpToTotalEnergy()
+    kwb.epanet:::energyPerPumpToTotalEnergy()
     # Argument "tmpEnergyPerPump" fehlt (ohne Standardwert)
   )
 

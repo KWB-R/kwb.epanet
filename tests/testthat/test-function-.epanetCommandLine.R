@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".epanetCommandLine() works", {
+test_that("epanetCommandLine() works", {
 
   expect_error(
-    kwb.epanet:::.epanetCommandLine()
+    kwb.epanet:::epanetCommandLine()
     # Argument "outfile" fehlt (ohne Standardwert)
   )
 

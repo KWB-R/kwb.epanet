@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".addIfNotNull() works", {
+test_that("addIfNotNull() works", {
 
   expect_error(
-    kwb.epanet:::.addIfNotNull()
+    kwb.epanet:::addIfNotNull()
     # Argument "value" fehlt (ohne Standardwert)
   )
 

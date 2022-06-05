@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".defaultLabel() works", {
+test_that("defaultLabel() works", {
 
   expect_error(
-    kwb.epanet:::.defaultLabel()
+    kwb.epanet:::defaultLabel()
     # Argument "name" fehlt (ohne Standardwert)
   )
 

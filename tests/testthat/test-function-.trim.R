@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".trim() works", {
+test_that("trim() works", {
 
   expect_error(
-    kwb.epanet:::.trim()
+    kwb.epanet:::trim()
     # Argument "x" fehlt (ohne Standardwert)
   )
 

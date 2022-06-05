@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".defaultColumnNames() works", {
+test_that("defaultColumnNames() works", {
 
   expect_error(
-    kwb.epanet:::.defaultColumnNames()
+    kwb.epanet:::defaultColumnNames()
     # Argument "numberOfColumns" fehlt (ohne Standardwert)
   )
 

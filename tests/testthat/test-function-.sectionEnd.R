@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".sectionEnd() works", {
+test_that("sectionEnd() works", {
 
   expect_error(
-    kwb.epanet:::.sectionEnd()
+    kwb.epanet:::sectionEnd()
     # Argument "index" fehlt (ohne Standardwert)
   )
 

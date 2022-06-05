@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".extractTimestamps() works", {
+test_that("extractTimestamps() works", {
 
   expect_error(
-    kwb.epanet:::.extractTimestamps()
+    kwb.epanet:::extractTimestamps()
     # Argument "reportLines" fehlt (ohne Standardwert)
   )
 

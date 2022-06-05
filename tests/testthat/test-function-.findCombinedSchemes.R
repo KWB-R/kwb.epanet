@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".findCombinedSchemes() works", {
+test_that("findCombinedSchemes() works", {
 
   expect_error(
-    kwb.epanet:::.findCombinedSchemes()
+    kwb.epanet:::findCombinedSchemes()
     # konnte Funktion "quotient" nicht finden
   )
 

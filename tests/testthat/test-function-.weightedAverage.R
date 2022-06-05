@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".weightedAverage() works", {
+test_that("weightedAverage() works", {
 
   expect_error(
-    kwb.epanet:::.weightedAverage()
+    kwb.epanet:::weightedAverage()
     # Argument "weight1" fehlt (ohne Standardwert)
   )
 

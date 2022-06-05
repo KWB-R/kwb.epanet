@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".defaultMain() works", {
+test_that("defaultMain() works", {
 
   expect_error(
-    kwb.epanet:::.defaultMain()
+    kwb.epanet:::defaultMain()
     # Argument "inpdat" fehlt (ohne Standardwert)
   )
 

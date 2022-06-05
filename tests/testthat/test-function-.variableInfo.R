@@ -5,9 +5,9 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".variableInfo() works", {
+test_that("variableInfo() works", {
 
-  kwb.epanet:::.variableInfo()
+  kwb.epanet:::variableInfo()
 
 })
 

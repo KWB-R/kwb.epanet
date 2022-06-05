@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".setTimeParameterIfGiven() works", {
+test_that("setTimeParameterIfGiven() works", {
 
   expect_error(
-    kwb.epanet:::.setTimeParameterIfGiven()
+    kwb.epanet:::setTimeParameterIfGiven()
     # Argument "parameterValue" fehlt (ohne Standardwert)
   )
 

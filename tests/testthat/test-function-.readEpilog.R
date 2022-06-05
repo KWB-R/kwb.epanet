@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".readEpilog() works", {
+test_that("readEpilog() works", {
 
   expect_error(
-    kwb.epanet:::.readEpilog()
+    kwb.epanet:::readEpilog()
     # Argument "con" fehlt (ohne Standardwert)
   )
 

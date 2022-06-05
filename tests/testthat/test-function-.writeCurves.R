@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".writeCurves() works", {
+test_that("writeCurves() works", {
 
   expect_error(
-    kwb.epanet:::.writeCurves()
+    kwb.epanet:::writeCurves()
     # Argument "curvesTable" fehlt (ohne Standardwert)
   )
 

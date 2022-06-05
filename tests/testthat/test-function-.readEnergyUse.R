@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".readEnergyUse() works", {
+test_that("readEnergyUse() works", {
 
   expect_error(
-    kwb.epanet:::.readEnergyUse()
+    kwb.epanet:::readEnergyUse()
     # Argument "prolog" fehlt (ohne Standardwert)
   )
 

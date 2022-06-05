@@ -5,10 +5,10 @@
 # so that real cases are tested. You should then delete this comment.
 #
 
-test_that(".getNodeOrLinkPropertyTimeSeries() works", {
+test_that("getNodeOrLinkPropertyTimeSeries() works", {
 
   expect_error(
-    kwb.epanet:::.getNodeOrLinkPropertyTimeSeries()
+    kwb.epanet:::getNodeOrLinkPropertyTimeSeries()
     # Argument "nodeOrLink" fehlt (ohne Standardwert)
   )
 
