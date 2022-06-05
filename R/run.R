@@ -67,7 +67,7 @@ getEpanetInstallationPath <- function()
 #' @export
 runEpanetGUI <- function(inpfile = "", epanet.dir = getEpanetInstallationPath())
 {
-  epanet.exe <- .stopIfEpanetExeDoesNotExist(epanet.dir, "epanet2w.exe")
+  epanet.exe <- stopIfEpanetExeDoesNotExist(epanet.dir, "epanet2w.exe")
   
   kwb.utils::hsSystem(
     sprintf("%s %s", shQuote(epanet.exe), shQuote(kwb.utils::windowsPath(inpfile))),
@@ -75,8 +75,8 @@ runEpanetGUI <- function(inpfile = "", epanet.dir = getEpanetInstallationPath())
   )
 }
 
-# .stopIfEpanetExeDoesNotExist -------------------------------------------------
-.stopIfEpanetExeDoesNotExist <- function(epanet.dir, epanet.exe)
+# stopIfEpanetExeDoesNotExist --------------------------------------------------
+stopIfEpanetExeDoesNotExist <- function(epanet.dir, epanet.exe)
 {
   epanet.exe <- file.path(epanet.dir, epanet.exe)
   
@@ -153,7 +153,7 @@ runEpanet <- function(
   dbg = FALSE
 )
 {
-  epanet.exe <- .stopIfEpanetExeDoesNotExist(epanet.dir, "epanet2d.exe")
+  epanet.exe <- stopIfEpanetExeDoesNotExist(epanet.dir, "epanet2d.exe")
   
   tdir <- kwb.utils::createDirectory(file.path(tempdir(), "epanet"), dbg = dbg)
   
@@ -257,7 +257,7 @@ runEpanetOnCommandLine <- function(
     ""
   }
   
-  commandLine <- .epanetCommandLine(epanet.exe, inpfile, rptfile, outfile)
+  commandLine <- epanetCommandLine(epanet.exe, inpfile, rptfile, outfile)
   
   output <- if (dbg) {
     # hsShell echoes the command line onto the screen
@@ -273,8 +273,8 @@ runEpanetOnCommandLine <- function(
   )
 }
 
-# .epanetCommandLine -----------------------------------------------------------
-.epanetCommandLine <- function(epanet.exe, inpfile, rptfile, outfile) 
+# epanetCommandLine ------------------------------------------------------------
+epanetCommandLine <- function(epanet.exe, inpfile, rptfile, outfile) 
 {
   if (outfile != "") {
     outfile <- shQuote(outfile)

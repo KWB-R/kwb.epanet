@@ -55,21 +55,21 @@ setReportOptions <- function(
 {
   section <- configuration$REPORT
   
-  section <- .setReportProperty(section, "PAGE", pagesize)
+  section <- setTimeParameterIfGiven(section, "PAGE", pagesize)
   
   if (file != "") {
-    section <- .setReportProperty(section, "FILE", file)
+    section <- setTimeParameterIfGiven(section, "FILE", file)
   }
   
-  section <- .setReportProperty(section, "STATUS", toupper(status))
-  section <- .setReportProperty(section, "SUMMARY", toupper(summary))
-  section <- .setReportProperty(section, "MESSAGES", toupper(messages))
-  section <- .setReportProperty(section, "ENERGY", toupper(energy))
-  section <- .setReportProperty(section, "NODES", nodes)
-  section <- .setReportProperty(section, "LINKS", links)
+  section <- setTimeParameterIfGiven(section, "STATUS", toupper(status))
+  section <- setTimeParameterIfGiven(section, "SUMMARY", toupper(summary))
+  section <- setTimeParameterIfGiven(section, "MESSAGES", toupper(messages))
+  section <- setTimeParameterIfGiven(section, "ENERGY", toupper(energy))
+  section <- setTimeParameterIfGiven(section, "NODES", nodes)
+  section <- setTimeParameterIfGiven(section, "LINKS", links)
   
   for (variable in variables) {
-    section <- .setReportVariable(section, variable)
+    section <- setReportVariable(section, variable)
   }
   
   configuration$REPORT <- section
@@ -77,8 +77,8 @@ setReportOptions <- function(
   configuration
 }
 
-# .setReportProperty -----------------------------------------------------------
-.setReportProperty <- function(section, name, value)
+# setTimeParameterIfGiven ------------------------------------------------------
+setTimeParameterIfGiven <- function(section, name, value)
 {
     name <- toupper(name)
     sectionRows.old <- section[toupper(section[[1]]) != name, 
@@ -88,33 +88,33 @@ setReportOptions <- function(
     rbind(sectionRows.old, sectionRows.new)
 }
 
-# .setReportVariable -----------------------------------------------------------
-.setReportVariable <- function(section, variable)
+# setReportVariable ------------------------------------------------------------
+setReportVariable <- function(section, variable)
 {
   affected <- section[[1]] == variable$name
   sectionRows.old <- section[!affected, ]
   sectionRows <- section[affected, ]
-  sectionRows <- .removeConcernedRows(sectionRows, "^(yes|no)")
+  sectionRows <- removeConcernedRows(sectionRows, "^(yes|no)")
   
   if (!is.null(variable$below) || !is.null(variable$above)) {
-    sectionRows <- .removeConcernedRows(sectionRows, "^(above|below)")
+    sectionRows <- removeConcernedRows(sectionRows, "^(above|below)")
   }
   
   if (!is.null(variable$precision)) {
-    sectionRows <- .removeConcernedRows(sectionRows, "^precision")
+    sectionRows <- removeConcernedRows(sectionRows, "^precision")
   }
   
-  newRows <- data.frame(name = variable$name, value = .yesno(variable$yes))
-  newRows <- .addIfNotNull(newRows, variable$name, "BELOW", variable$below)
-  newRows <- .addIfNotNull(newRows, variable$name, "ABOVE", variable$above)
-  newRows <- .addIfNotNull(newRows, variable$name, "PRECISION", variable$precision)
+  newRows <- data.frame(name = variable$name, value = yesno(variable$yes))
+  newRows <- addIfNotNull(newRows, variable$name, "BELOW", variable$below)
+  newRows <- addIfNotNull(newRows, variable$name, "ABOVE", variable$above)
+  newRows <- addIfNotNull(newRows, variable$name, "PRECISION", variable$precision)
   
   names(newRows) <- names(sectionRows)
   rbind(sectionRows.old, sectionRows, newRows)
 }
 
-# .removeConcernedRows ---------------------------------------------------------
-.removeConcernedRows <- function(rows, pattern)
+# removeConcernedRows ----------------------------------------------------------
+removeConcernedRows <- function(rows, pattern)
 {
   indices <- grep(pattern, rows[[2]], ignore.case = TRUE)
   
@@ -125,8 +125,8 @@ setReportOptions <- function(
   rows
 }
 
-# .addIfNotNull ----------------------------------------------------------------
-.addIfNotNull <- function(rows, variableName, propertyName, value)
+# addIfNotNull -----------------------------------------------------------------
+addIfNotNull <- function(rows, variableName, propertyName, value)
 {
   if (!is.null(value)) {
     rows <- rbind(
@@ -221,8 +221,8 @@ reportVariable <- function(
   variableConfiguration
 }
 
-# .yesno -----------------------------------------------------------------------
-.yesno <- function(yesno)
+# yesno ------------------------------------------------------------------------
+yesno <- function(yesno)
 {
   ifelse(yesno, "YES", "NO")
 }

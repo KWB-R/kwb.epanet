@@ -36,23 +36,23 @@ setTimeParameter <- function
 {
   times <- configuration$TIMES
   
-  times <- .setTimeParameterIfGiven(times, "DURATION", duration)
-  times <- .setTimeParameterIfGiven(times, "HYDRAULIC TIMESTEP", hydraulic.timestep)
-  times <- .setTimeParameterIfGiven(times, "QUALITY TIMESTEP", quality.timestep)
-  times <- .setTimeParameterIfGiven(times, "RULE TIMESTEP", rule.timestep)
-  times <- .setTimeParameterIfGiven(times, "PATTERN TIMESTEP", pattern.timestep)
-  times <- .setTimeParameterIfGiven(times, "PATTERN START", pattern.start)
-  times <- .setTimeParameterIfGiven(times, "REPORT TIMESTEP", report.timestep)
-  times <- .setTimeParameterIfGiven(times, "REPORT START", report.start)
-  times <- .setTimeParameterIfGiven(times, "STATISTIC", statistic)
+  times <- setTimeParameterIfGiven(times, "DURATION", duration)
+  times <- setTimeParameterIfGiven(times, "HYDRAULIC TIMESTEP", hydraulic.timestep)
+  times <- setTimeParameterIfGiven(times, "QUALITY TIMESTEP", quality.timestep)
+  times <- setTimeParameterIfGiven(times, "RULE TIMESTEP", rule.timestep)
+  times <- setTimeParameterIfGiven(times, "PATTERN TIMESTEP", pattern.timestep)
+  times <- setTimeParameterIfGiven(times, "PATTERN START", pattern.start)
+  times <- setTimeParameterIfGiven(times, "REPORT TIMESTEP", report.timestep)
+  times <- setTimeParameterIfGiven(times, "REPORT START", report.start)
+  times <- setTimeParameterIfGiven(times, "STATISTIC", statistic)
   
   configuration$TIMES <- times
   
   configuration
 }
 
-# .setTimeParameterIfGiven -----------------------------------------------------
-.setTimeParameterIfGiven <- function(times, parameterName, parameterValue)
+# setTimeParameterIfGiven ------------------------------------------------------
+setTimeParameterIfGiven <- function(times, parameterName, parameterValue)
 {
   if (parameterValue != "") {
     
