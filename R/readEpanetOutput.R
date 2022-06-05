@@ -461,8 +461,8 @@ readEpanetOutputFile <- function(
   dynamicResults, property, prolog, nodeOrLink
 )
 {
-  name1 <- paste(nodeOrLink, "Data", sep = "")
-  name2 <- paste("IDStringOfEach", nodeOrLink, sep = "")
+  name1 <- paste0(nodeOrLink, "Data")
+  name2 <- paste0("IDStringOfEach", nodeOrLink)
   
   m <- t(
     sapply(

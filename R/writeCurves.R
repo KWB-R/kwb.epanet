@@ -193,8 +193,8 @@ writeEfficiencyCurves <- function(
   
   rows <- which(sectionConfig$ID %in% provided)
   
-  sectionConfig[rows, columnName] <- paste(
-    curvePrefix, curveNamePrefix, sectionConfig$ID[rows], sep = ""
+  sectionConfig[rows, columnName] <- paste0(
+    curvePrefix, curveNamePrefix, sectionConfig$ID[rows]
   )
   
   sectionConfig
@@ -250,7 +250,7 @@ writeEfficiencyCurves <- function(
 # .modifyCurvesConfiguration ---------------------------------------------------
 .modifyCurvesConfiguration <- function(curvesConfig, curvesTable, curveNamePrefix)
 {
-  curvesTable$ID <- paste(curveNamePrefix, curvesTable$ID, sep = "")
+  curvesTable$ID <- paste0(curveNamePrefix, curvesTable$ID)
   affected <- (curvesConfig$ID %in% unique(curvesTable$ID))
   rbind(curvesConfig[!affected, ], curvesTable)
 }
@@ -326,13 +326,13 @@ writeEfficiencyCurves <- function(
 
 # .firstLetterUpperCase --------------------------------------------------------
 .firstLetterUpperCase <- function(x) {
-  paste(toupper(substr(x, 1, 1)), substr(x, 2, nchar(x)), sep = "")
+  paste0(toupper(substr(x, 1L, 1L)), substr(x, 2L, nchar(x)))
 }
 
 # .plural ----------------------------------------------------------------------
 .plural <- function(x)
 {
-  paste(x, "s", sep = "")
+  paste0(x, "s")
 }
 
 # .deleteCurvesIf --------------------------------------------------------------

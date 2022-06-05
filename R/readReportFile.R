@@ -55,7 +55,7 @@ readResultsFromReportFile <- function(reportFile, warn = TRUE)
   textblock <- reportLines[blockindices]
   headerInfo <- .extractVariableAndUnitNames(reportLines, index = indices[1])
   col.number <- length(headerInfo$variableNames) + 2
-  col.names <- paste("V", seq_len(col.number), sep = "")
+  col.names <- paste0("V", seq_len(col.number))
   
   dataFrame <- kwb.utils::csvTextToDataFrame(
     textblock, fill = TRUE, col.names = col.names, 

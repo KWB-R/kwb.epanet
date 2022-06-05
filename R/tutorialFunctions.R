@@ -353,7 +353,7 @@ runOptimisationStrategy <- function(
 .getCurveWithReplacedID <- function(curveData, pumpsToReplace, prefix)
 {
   curve <- curveData[curveData$ID %in% pumpsToReplace, ]
-  curve$ID <- paste(prefix, curve$ID, sep = "")
+  curve$ID <- paste0(prefix, curve$ID)
   curve
 }
 
@@ -616,7 +616,7 @@ fitnessAdaptedModelConfiguration <- function(
   
   pumpInfo$pch <- 1
   pumpInfo$pch[pumpInfo$pumpNames %in% pumpsToCalibrate] <- 16
-  pumpInfo$pumpsToCalibrate <- paste(pumpsToCalibrate, sep="", collapse= " & ") 
+  pumpInfo$pumpsToCalibrate <- paste(pumpsToCalibrate, collapse = " & ") 
   
   res <- merge(res, pumpInfo)
   

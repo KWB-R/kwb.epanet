@@ -265,7 +265,7 @@ getSection <- function(inpfile, sectionName)
 # .defaultColumnNames ----------------------------------------------------------
 .defaultColumnNames <- function(numberOfColumns)
 {
-  paste("X", seq_len(numberOfColumns), sep = "")
+  paste0("X", seq_len(numberOfColumns))
 }
 
 # .substSpecialCharacters ------------------------------------------------------
