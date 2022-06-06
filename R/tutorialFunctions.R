@@ -824,7 +824,7 @@ createOptimisationResultsTable <- function(
 {  
   allBestResults <- data.frame()
   
-  for (index in seq_len(length(optimisationStrategies))) {
+  for (index in seq_along(optimisationStrategies)) {
     
     strategy <- optimisationStrategies[[index]]
     
