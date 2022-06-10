@@ -1,11 +1,11 @@
-# .removeZeroesAtTheEnd --------------------------------------------------------
-.removeZeroesAtTheEnd <- function(x)
+# removeZeroesAtTheEnd ---------------------------------------------------------
+removeZeroesAtTheEnd <- function(x)
 {
   gsub("\\.?0+\\s*$", "", x)
 }
 
-# .trim ------------------------------------------------------------------------
-.trim <- function(x)
+# trim -------------------------------------------------------------------------
+trim <- function(x)
 {
   gsub("^\\s+", "", gsub("\\s+$", "", x))
 }
@@ -26,7 +26,7 @@
 #' (default: 0.2)
 #' @param xlab a title for the x axis (default: "") 
 #' @param ylab a title for the y axis (default: "") 
-#' @param main an overall title for the plot (default: kwb.epanet:::.defaultMain(inpdat, 1))
+#' @param main an overall title for the plot (default: kwb.epanet:::defaultMain(inpdat, 1))
 #' @param zoomToPumps should plot zoomed to pumps (default: FALSE)
 #' @param changedPipeIDs optional, vector with changed pipe IDs (default: NULL)
 #' @param ... additional arguments passed to \link[graphics]{plot}
@@ -37,7 +37,7 @@ plotModel <- function(
   cex = 0.2, 
   xlab = "", 
   ylab = "", 
-  main = .defaultMain(inpdat, 1), 
+  main = defaultMain(inpdat, 1), 
   zoomToPumps = FALSE, 
   changedPipeIDs = NULL,
   ...
@@ -95,8 +95,8 @@ plotModel <- function(
   }  
 }
 
-# .defaultMain -----------------------------------------------------------------
-.defaultMain <- function(inpdat, titleLines = 1:3)
+# defaultMain ------------------------------------------------------------------
+defaultMain <- function(inpdat, titleLines = 1:3)
 {
   paste(inpdat$TITLE[titleLines, ], collapse = "\n")
 }

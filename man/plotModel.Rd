@@ -10,7 +10,7 @@ plotModel(
   cex = 0.2,
   xlab = "",
   ylab = "",
-  main = .defaultMain(inpdat, 1),
+  main = defaultMain(inpdat, 1),
   zoomToPumps = FALSE,
   changedPipeIDs = NULL,
   ...
@@ -32,7 +32,7 @@ opened, and is reset when the layout is changed, e.g. by setting mfrow.
 
 \item{ylab}{a title for the y axis (default: "")}
 
-\item{main}{an overall title for the plot (default: kwb.epanet:::.defaultMain(inpdat, 1))}
+\item{main}{an overall title for the plot (default: kwb.epanet:::defaultMain(inpdat, 1))}
 
 \item{zoomToPumps}{should plot zoomed to pumps (default: FALSE)}
 

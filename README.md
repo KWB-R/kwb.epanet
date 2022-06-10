@@ -1,13 +1,14 @@
 [![R-CMD-check](https://github.com/KWB-R/kwb.epanet/workflows/R-CMD-check/badge.svg)](https://github.com/KWB-R/kwb.epanet/actions?query=workflow%3AR-CMD-check)
 [![pkgdown](https://github.com/KWB-R/kwb.epanet/workflows/pkgdown/badge.svg)](https://github.com/KWB-R/kwb.epanet/actions?query=workflow%3Apkgdown)
-[![codecov](https://codecov.io/github/KWB-R/kwb.epanet/branch/master/graphs/badge.svg)](https://codecov.io/github/KWB-R/kwb.epanet)
-[![Project Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![codecov](https://codecov.io/github/KWB-R/kwb.epanet/branch/main/graphs/badge.svg)](https://codecov.io/github/KWB-R/kwb.epanet)
+[![Project Status](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/kwb.epanet)]()
+[![R-Universe_Status_Badge](https://kwb-r.r-universe.dev/badges/kwb.epanet)](https://kwb-r.r-universe.dev/)
 
 # kwb.epanet
 
 Functions enabling the reading and writing of
-EPANET 2 (https://www.epa.gov/water-research/epanet) input files and
+EPANET (http://www.epa.gov/nrmrl/wswrd/dw/epanet.html) input files and
 reading of output files.
 
 ## Installation
