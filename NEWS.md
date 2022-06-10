@@ -1,4 +1,4 @@
-# kwb.epanet 0.2.0
+# [kwb.epanet 0.2.0](https://github.com/KWB-R/kwb.epanet/releases/tag/v0.2.0) <small>2022-06-10</small>
 
 Prepare public release with the help of R package [kwb.pkgbuild](https://kwb-r.github.io/kwb.pkgbuild) 
 
@@ -13,14 +13,14 @@ added CI: Github actions, documentation website)
 
 # kwb.epanet 0.0.4
 
-* new: runEpanet, runEpanetOnCommandLine, createDirAndReturnPath, replaceFileExtension
+* new: `runEpanet`, `runEpanetOnCommandLine`, `createDirAndReturnPath`, `replaceFileExtension`
 
-* writeInputFileWithNewCurveSection now returns the path of the created file
+* `writeInputFileWithNewCurveSection` now returns the path of the created file
 
 # kwb.epanet 0.0.3
 
-* new: writeInputFileWithNewCurveSection, replaceCurveSectionInInputFile,
-  curvesToText, replaceCurves, replaceOneCurve
+* new: `writeInputFileWithNewCurveSection`, `replaceCurveSectionInInputFile`,
+  `curvesToText`, `replaceCurves`, `replaceOneCurve`
 
 # kwb.epanet 0.0.2
 
