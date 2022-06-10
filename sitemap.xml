@@ -1,198 +1,195 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/404.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/404.html</loc>
   </url>
   <url>
-    <loc>/LICENSE-text.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/authors.html</loc>
   </url>
   <url>
-    <loc>/LICENSE.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/index.html</loc>
   </url>
   <url>
-    <loc>/authors.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/LICENSE.html</loc>
   </url>
   <url>
-    <loc>/news/index.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/availableSections.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/availableSections.html</loc>
   </url>
   <url>
-    <loc>/reference/calculateSpecificEnergyDemand.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/calculateSpecificEnergyDemand.html</loc>
   </url>
   <url>
-    <loc>/reference/calibrateModel.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/calibrateModel.html</loc>
   </url>
   <url>
-    <loc>/reference/checkReportFileForErrors.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/checkReportFileForErrors.html</loc>
   </url>
   <url>
-    <loc>/reference/createOptimisationResultsTable.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/createOptimisationResultsTable.html</loc>
   </url>
   <url>
-    <loc>/reference/curvesToText.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/curvesToText.html</loc>
   </url>
   <url>
-    <loc>/reference/defaultReportVariables.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/defaultReportVariables.html</loc>
   </url>
   <url>
-    <loc>/reference/epanetInputFileLines.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/epanetInputFileLines.html</loc>
   </url>
   <url>
-    <loc>/reference/exampleInputFiles.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/exampleInputFiles.html</loc>
   </url>
   <url>
-    <loc>/reference/getEpanetInstallationPath.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getEpanetInstallationPath.html</loc>
   </url>
   <url>
-    <loc>/reference/getLinkResults.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getLinkResults.html</loc>
   </url>
   <url>
-    <loc>/reference/getLinkTimeseriesFromOutputData.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getLinkTimeseriesFromOutputData.html</loc>
   </url>
   <url>
-    <loc>/reference/getNamesOfCurves.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getNamesOfCurves.html</loc>
   </url>
   <url>
-    <loc>/reference/getNamesOfJunctions.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getNamesOfJunctions.html</loc>
   </url>
   <url>
-    <loc>/reference/getNamesOfPipes.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getNamesOfPipes.html</loc>
   </url>
   <url>
-    <loc>/reference/getNamesOfPumps.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getNamesOfPumps.html</loc>
   </url>
   <url>
-    <loc>/reference/getNamesOfReservoirs.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getNamesOfReservoirs.html</loc>
   </url>
   <url>
-    <loc>/reference/getNamesOfTanks.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getNamesOfTanks.html</loc>
   </url>
   <url>
-    <loc>/reference/getNamesOfValves.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getNamesOfValves.html</loc>
   </url>
   <url>
-    <loc>/reference/getNodeResults.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getNodeResults.html</loc>
   </url>
   <url>
-    <loc>/reference/getNodeTimeseriesFromOutputData.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getNodeTimeseriesFromOutputData.html</loc>
   </url>
   <url>
-    <loc>/reference/getNumberOfPeriods.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getNumberOfPeriods.html</loc>
   </url>
   <url>
-    <loc>/reference/getPipeCoordinates.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getPipeCoordinates.html</loc>
   </url>
   <url>
-    <loc>/reference/getPumpInfo.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getPumpInfo.html</loc>
   </url>
   <url>
-    <loc>/reference/getPumpPerformance.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getPumpPerformance.html</loc>
   </url>
   <url>
-    <loc>/reference/getSection.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/getSection.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/outputFileSize.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/outputFileSize.html</loc>
   </url>
   <url>
-    <loc>/reference/plotCalibration.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/plotCalibration.html</loc>
   </url>
   <url>
-    <loc>/reference/plotCurves.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/plotCurves.html</loc>
   </url>
   <url>
-    <loc>/reference/plotModel.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/plotModel.html</loc>
   </url>
   <url>
-    <loc>/reference/plotOptimisationResults.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/plotOptimisationResults.html</loc>
   </url>
   <url>
-    <loc>/reference/plotPumpPerformance.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/plotPumpPerformance.html</loc>
   </url>
   <url>
-    <loc>/reference/readEpanetInputFile.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/readEpanetInputFile.html</loc>
   </url>
   <url>
-    <loc>/reference/readEpanetOutputFile.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/readEpanetOutputFile.html</loc>
   </url>
   <url>
-    <loc>/reference/readResultsFromReportFile.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/readResultsFromReportFile.html</loc>
   </url>
   <url>
-    <loc>/reference/replaceCurveSectionInInputFile.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/replaceCurves.html</loc>
   </url>
   <url>
-    <loc>/reference/replaceCurves.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/replaceCurveSectionInInputFile.html</loc>
   </url>
   <url>
-    <loc>/reference/replaceFileExtension.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/replaceOneCurve.html</loc>
   </url>
   <url>
-    <loc>/reference/replaceOneCurve.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/reportEnergyUse.html</loc>
   </url>
   <url>
-    <loc>/reference/reportEnergyUse.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/reportVariable.html</loc>
   </url>
   <url>
-    <loc>/reference/reportVariable.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/runEpanet.html</loc>
   </url>
   <url>
-    <loc>/reference/runEpanet.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/runEpanetConfiguration.html</loc>
   </url>
   <url>
-    <loc>/reference/runEpanetConfiguration.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/runEpanetGUI.html</loc>
   </url>
   <url>
-    <loc>/reference/runEpanetGUI.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/runEpanetOnCommandLine.html</loc>
   </url>
   <url>
-    <loc>/reference/runEpanetOnCommandLine.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/runOptimisationStrategy.html</loc>
   </url>
   <url>
-    <loc>/reference/runOptimisationStrategy.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/setEpanetInstallationPath.html</loc>
   </url>
   <url>
-    <loc>/reference/setEpanetInstallationPath.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/setReportOptions.html</loc>
   </url>
   <url>
-    <loc>/reference/setReportOptions.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/setTimeParameter.html</loc>
   </url>
   <url>
-    <loc>/reference/setTimeParameter.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/setWellFieldOperation.html</loc>
   </url>
   <url>
-    <loc>/reference/setWellFieldOperation.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/showProperties.html</loc>
   </url>
   <url>
-    <loc>/reference/showProperties.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/wellFieldOperationSchemes.html</loc>
   </url>
   <url>
-    <loc>/reference/wellFieldOperationSchemes.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/writeCurves.html</loc>
   </url>
   <url>
-    <loc>/reference/writeCurves.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/writeDrawdownCurves.html</loc>
   </url>
   <url>
-    <loc>/reference/writeDrawdownCurves.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/writeEfficiencyCurves.html</loc>
   </url>
   <url>
-    <loc>/reference/writeEfficiencyCurves.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/writeEpanetInputFile.html</loc>
   </url>
   <url>
-    <loc>/reference/writeEpanetInputFile.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/writeInputFileWithNewCurveSection.html</loc>
   </url>
   <url>
-    <loc>/reference/writeInputFileWithNewCurveSection.html</loc>
-  </url>
-  <url>
-    <loc>/reference/writePumpCurves.html</loc>
+    <loc>https://kwb-r.github.io/kwb.epanet/reference/writePumpCurves.html</loc>
   </url>
 </urlset>
