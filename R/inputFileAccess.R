@@ -308,6 +308,9 @@ exampleInputFiles <- function()
   dir(extdata_file(), "\\.inp$", full.names = TRUE)
 }
 
+#' Get Path to File in This Package
+#' 
+#' @inheritParams kwb.utils::extdataFile
 extdata_file <- kwb.utils::createFunctionExtdataFile("kwb.epanet")
 
 # writeInputFileWithNewCurveSection --------------------------------------------
